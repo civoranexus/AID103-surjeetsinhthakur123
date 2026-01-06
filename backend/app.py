@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
-from model import predict_disease
+from backend.cnn_model import predict_disease
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
