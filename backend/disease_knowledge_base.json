@@ -1,0 +1,18 @@
+{
+  "Tomato": {
+    "Early Blight": {
+      "treatment": {
+        "chemical": "Copper fungicide (minimal dose)",
+        "organic": "Neem oil spray",
+        "prevention": "Crop rotation and proper spacing"
+      }
+    },
+    "Leaf Curl Virus": {
+      "treatment": {
+        "chemical": "Imidacloprid only if severe",
+        "organic": "Yellow sticky traps",
+        "prevention": "Whitefly control"
+      }
+    }
+  }
+}

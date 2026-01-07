@@ -1,37 +1,19 @@
 from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
-import os
-from backend.cnn_model import predict_disease
+from ai_engine import analyze_crop
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route("/analyze", methods=["POST"])
-def analyze_crop():
-    if "image" not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
+def analyze():
+    data = request.json
 
-    image = request.files["image"]
-    crop_type = request.form.get("crop_type")
-    location = request.form.get("location")
+    crop = data["crop"]
+    humidity = data["humidity"]
+    temperature = data["temperature"]
 
-    filename = secure_filename(image.filename)
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
-    image.save(image_path)
+    result = analyze_crop(crop, humidity, temperature)
 
-    result = predict_disease(image_path, crop_type)
-
-    response = {
-        "crop": crop_type,
-        "location": location,
-        "disease_detected": result["disease"],
-        "severity": result["severity"],
-        "recommendation": result["recommendation"],
-        "confidence": result["confidence"]
-    }
-
-    return jsonify(response)
+    return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5000, debug=True)
