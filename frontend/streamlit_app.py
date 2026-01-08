@@ -8,42 +8,81 @@ st.subheader("Intelligent Crop Disease Detection Platform")
 
 st.markdown("""
 This system provides **AI-driven crop disease detection**
-and **context-aware treatment recommendations**
-to improve yield and reduce pesticide usage.
+and **context-aware treatment recommendations**.
+You can analyze crops **with or without uploading an image**.
 """)
 
-# --- USER INPUT ---
+# ---------------- USER INPUTS ----------------
 crop = st.selectbox("Select Crop", ["Tomato"])
 humidity = st.slider("Humidity (%)", 30, 100, 70)
 temperature = st.slider("Temperature (°C)", 15, 45, 30)
 
+st.markdown("### 📸 Crop Image (Optional)")
+uploaded_image = st.file_uploader(
+    "Upload Crop Image",
+    type=["jpg", "jpeg", "png"]
+)
+camera_image = st.camera_input("Or Capture Image Using Camera")
+
+# Choose image if provided
+image_file = uploaded_image if uploaded_image else camera_image
+
+if image_file:
+    st.image(image_file, caption="Selected Crop Image", use_column_width=True)
+    st.info("Image-based analysis will be used (CNN).")
+else:
+    st.info("No image uploaded. Analysis will be based on crop and environmental data.")
+
+# ---------------- ANALYZE ----------------
 if st.button("Analyze Crop"):
-    payload = {
-        "crop": crop,
-        "humidity": humidity,
-        "temperature": temperature
-    }
-
     with st.spinner("Contacting AI Engine..."):
-        response = requests.post(
-            "http://127.0.0.1:5000/analyze",
-            json=payload
-        )
+        try:
+            data = {
+                "crop": crop,
+                "humidity": humidity,
+                "temperature": temperature
+            }
 
-    result = response.json()
+            files = {"image": image_file} if image_file else None
 
-    st.success("AI Analysis Completed")
+            response = requests.post(
+                "http://127.0.0.1:5000/analyze",
+                data=data,
+                files=files,
+                timeout=30
+            )
 
-    st.markdown("### 🧠 AI Detection Result")
-    st.write("**Disease Detected:**", result["disease_detected"])
-    st.write("**Severity:**", result["severity"])
-    st.write("**Confidence:**", result["confidence"])
+            if response.headers.get("Content-Type") != "application/json":
+                st.error("Backend did not return JSON.")
+                st.text(response.text)
+            else:
+                result = response.json()
 
-    st.markdown("### 💊 Treatment & Advisory")
-    st.write("**Chemical Treatment:**", result["advisory"]["treatment"]["chemical"])
-    st.write("**Organic Treatment:**", result["advisory"]["treatment"]["organic"])
-    st.write("**Prevention:**", result["advisory"]["treatment"]["prevention"])
+                if "error" in result:
+                    st.error(result.get("error"))
+                else:
+                    st.success("AI Analysis Completed")
 
-    st.markdown("### 🌾 Optimization Strategy")
-    st.write("**Pesticide Strategy:**", result["advisory"]["pesticide_strategy"])
-    st.write("**Yield Impact:**", result["advisory"]["yield_impact"])
+                    st.markdown("### 🧠 AI Detection Result")
+                    st.write("**Disease Detected:**", result.get("disease_detected"))
+                    st.write("**Severity:**", result.get("severity"))
+                    st.write("**Confidence:**", result.get("confidence"))
+
+                    st.markdown("### 💊 Treatment & Advisory")
+                    advisory = result.get("advisory", {})
+                    treatment = advisory.get("treatment", {})
+
+                    if isinstance(treatment, dict):
+                        st.write("**Chemical Treatment:**", treatment.get("chemical", "N/A"))
+                        st.write("**Organic Treatment:**", treatment.get("organic", "N/A"))
+                        st.write("**Prevention:**", treatment.get("prevention", "N/A"))
+                    else:
+                        st.write(treatment)
+
+                    st.markdown("### 🌾 Optimization Strategy")
+                    st.write("**Pesticide Strategy:**", advisory.get("pesticide_strategy", "N/A"))
+                    st.write("**Yield Impact:**", advisory.get("yield_impact", "N/A"))
+
+        except requests.exceptions.RequestException as e:
+            st.error("Failed to connect to backend.")
+            st.text(str(e))
