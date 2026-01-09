@@ -13,6 +13,109 @@
         "organic": "Yellow sticky traps",
         "prevention": "Whitefly control"
       }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Maintain soil health",
+        "prevention": "Regular monitoring and balanced irrigation"
+      }
+    }
+  },
+
+  "Potato": {
+    "Early Blight": {
+      "treatment": {
+        "chemical": "Chlorothalonil fungicide",
+        "organic": "Compost tea spray",
+        "prevention": "Avoid overhead irrigation"
+      }
+    },
+    "Late Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Copper-based organic fungicide",
+        "prevention": "Use certified seeds and remove infected plants"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Organic compost application",
+        "prevention": "Proper field sanitation"
+      }
+    }
+  },
+
+  "Wheat": {
+    "Rust Disease": {
+      "treatment": {
+        "chemical": "Propiconazole fungicide",
+        "organic": "Sulfur spray",
+        "prevention": "Use rust-resistant varieties"
+      }
+    },
+    "Powdery Mildew": {
+      "treatment": {
+        "chemical": "Triadimefon fungicide",
+        "organic": "Milk spray solution",
+        "prevention": "Maintain adequate plant spacing"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Maintain soil nutrition",
+        "prevention": "Timely sowing and irrigation"
+      }
+    }
+  },
+
+  "Rice": {
+    "Rice Blast": {
+      "treatment": {
+        "chemical": "Tricyclazole fungicide",
+        "organic": "Neem-based bio-fungicide",
+        "prevention": "Avoid excessive nitrogen fertilization"
+      }
+    },
+    "Brown Spot": {
+      "treatment": {
+        "chemical": "Carbendazim fungicide",
+        "organic": "Organic compost enrichment",
+        "prevention": "Improve soil fertility"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Green manure application",
+        "prevention": "Proper water management"
+      }
+    }
+  },
+
+  "Maize": {
+    "Leaf Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Neem oil spray",
+        "prevention": "Crop rotation and residue management"
+      }
+    },
+    "Downy Mildew": {
+      "treatment": {
+        "chemical": "Metalaxyl fungicide",
+        "organic": "Biological seed treatment",
+        "prevention": "Use disease-free seeds"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Organic manure application",
+        "prevention": "Maintain field hygiene"
+      }
     }
   }
 }

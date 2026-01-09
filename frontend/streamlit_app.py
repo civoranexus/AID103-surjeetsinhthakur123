@@ -13,7 +13,16 @@ You can analyze crops **with or without uploading an image**.
 """)
 
 # ---------------- USER INPUTS ----------------
-crop = st.selectbox("Select Crop", ["Tomato"])
+CROP_OPTIONS = [
+    "Tomato",
+    "Potato",
+    "Wheat",
+    "Rice",
+    "Maize"
+]
+
+crop = st.selectbox("Select Crop", CROP_OPTIONS)
+
 humidity = st.slider("Humidity (%)", 30, 100, 70)
 temperature = st.slider("Temperature (°C)", 15, 45, 30)
 
@@ -64,6 +73,7 @@ if st.button("Analyze Crop"):
                     st.success("AI Analysis Completed")
 
                     st.markdown("### 🧠 AI Detection Result")
+                    st.write("**Crop Selected:**", crop)
                     st.write("**Disease Detected:**", result.get("disease_detected"))
                     st.write("**Severity:**", result.get("severity"))
                     st.write("**Confidence:**", result.get("confidence"))
