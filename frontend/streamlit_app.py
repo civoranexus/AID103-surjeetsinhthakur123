@@ -78,6 +78,30 @@ if st.button("Analyze Crop"):
                     st.write("**Severity:**", result.get("severity"))
                     st.write("**Confidence:**", result.get("confidence"))
 
+                    # ---------- CONFIDENCE BAR ----------
+                    confidence_value = result.get("confidence", "0")
+
+                    if isinstance(confidence_value, str) and "%" in confidence_value:
+                        try:
+                            conf_percent = float(confidence_value.replace("%", ""))
+                            st.markdown("#### 🔍 Prediction Confidence")
+                            st.progress(conf_percent / 100)
+                            st.caption(f"Confidence Level: {conf_percent:.2f}%")
+                        except:
+                            st.caption("Confidence level not numeric")
+                    else:
+                        st.markdown("#### 🔍 Prediction Confidence")
+                        st.caption("Rule-based inference (no numeric confidence)")
+
+                    # ---------- RISK SCORE ----------
+                    risk_score = result.get("risk_score")
+
+                    if isinstance(risk_score, (int, float)):
+                        st.markdown("#### ⚠️ Risk Score")
+                        st.progress(risk_score)
+                        st.caption(f"Risk Score: {risk_score:.2f} (0 = Low, 1 = High)")
+
+
                     st.markdown("### 💊 Treatment & Advisory")
                     advisory = result.get("advisory", {})
                     treatment = advisory.get("treatment", {})
