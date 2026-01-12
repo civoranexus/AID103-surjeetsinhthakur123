@@ -3,12 +3,11 @@ import numpy as np
 import os
 from image_preprocessing import preprocess_image
 
-# ---------------- CONFIG ----------------
 MODEL_PATH = "../model/crop_disease_cnn.h5"
 CLASS_LABELS = ["Early Blight", "Leaf Curl Virus", "Healthy"]
-CONFIDENCE_THRESHOLD = 0.60   # minimum confidence to trust CNN
 
-# ---------------- MODEL LOADING ----------------
+CONFIDENCE_THRESHOLD = 60.0  # percent
+
 model = None
 MODEL_STATUS = "NOT_LOADED"
 
@@ -23,60 +22,43 @@ else:
     MODEL_STATUS = "MODEL_NOT_FOUND"
 
 
-# ---------------- PREDICTION FUNCTION ----------------
 def extract_image_features(image_path):
-    """
-    Extracts disease prediction from image using CNN.
-
-    Returns:
-    - disease
-    - confidence
-    - inference_source
-    - model_status
-    """
-
-    # -------- FALLBACK MODE --------
     if model is None:
         return {
             "disease": "Early Blight",
             "confidence": "90%",
-            "inference_source": "fallback_rule",
+            "source": "fallback",
+            "inference_source": "fallback",
             "model_status": MODEL_STATUS
         }
 
-    # -------- IMAGE PREPROCESSING --------
     img = preprocess_image(image_path)
+    preds = model.predict(img)
 
-    # -------- MODEL INFERENCE --------
-    predictions = model.predict(img)
+    probs = tf.nn.softmax(preds[0]).numpy()
+    idx = int(np.argmax(probs))
+    conf_percent = float(probs[idx] * 100)
 
-    # Ensure valid probability distribution
-    probabilities = tf.nn.softmax(predictions[0]).numpy()
-
-    # Top prediction
-    top_index = int(np.argmax(probabilities))
-    top_confidence = float(probabilities[top_index])
-
-    # -------- LOW CONFIDENCE HANDLING --------
-    if top_confidence < CONFIDENCE_THRESHOLD:
+    if conf_percent < CONFIDENCE_THRESHOLD:
         return {
             "disease": "Uncertain",
-            "confidence": f"{top_confidence * 100:.2f}%",
+            "confidence": f"{conf_percent:.2f}%",
+            "source": "cnn",
             "inference_source": "low_confidence",
             "model_status": MODEL_STATUS
         }
 
-    # -------- SUCCESSFUL CNN PREDICTION --------
     return {
-        "disease": CLASS_LABELS[top_index],
-        "confidence": f"{top_confidence * 100:.2f}%",
+        "disease": CLASS_LABELS[idx],
+        "confidence": f"{conf_percent:.2f}%",
+        "source": "cnn",
         "inference_source": "cnn",
         "model_status": MODEL_STATUS,
         "top_predictions": [
             {
                 "label": CLASS_LABELS[i],
-                "probability": f"{probabilities[i] * 100:.2f}%"
+                "probability": f"{probs[i] * 100:.2f}%"
             }
-            for i in np.argsort(probabilities)[::-1][:3]
+            for i in np.argsort(probs)[::-1][:3]
         ]
     }

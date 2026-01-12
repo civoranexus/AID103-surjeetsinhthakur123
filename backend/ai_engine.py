@@ -4,7 +4,7 @@ from decision_logic import assess_severity, pesticide_optimization
 with open("disease_knowledge_base.json") as f:
     DB = json.load(f)
 
-CONFIDENCE_THRESHOLD = 70.0  # CNN confidence cutoff (percentage)
+CONFIDENCE_THRESHOLD = 70.0  # percent
 
 SEVERITY_RISK_MAP = {
     "Low": 0.2,
@@ -13,59 +13,42 @@ SEVERITY_RISK_MAP = {
 }
 
 def analyze_crop(image_features, crop_type, environment):
-    """
-    Final AI Decision Engine (Best Version)
 
-    Logic:
-    - CNN predicts disease if confidence is reliable
-    - Otherwise fallback to rule-based inference
-    - Environment determines severity
-    - Knowledge base maps treatment
-    """
-
-    # -------- VALIDATION --------
     if crop_type not in DB:
-        return {
-            "status": "FAILED",
-            "error": "Crop not supported"
-        }
+        return {"status": "FAILED", "error": "Crop not supported"}
 
-    # -------- SEVERITY & RISK --------
     severity = assess_severity(
         environment["humidity"],
         environment["temperature"]
     )
     risk_score = SEVERITY_RISK_MAP.get(severity, 0.0)
 
-    # -------- CNN CONFIDENCE CHECK --------
+    # ---------- CNN VALIDATION ----------
     use_cnn = False
     decision_reason = "Rule-based inference applied"
 
     if image_features:
+        disease_from_cnn = image_features.get("disease")
+
         try:
-            cnn_conf = float(
-                image_features.get("confidence", "0").replace("%", "")
-            )
+            cnn_conf = float(image_features.get("confidence", "0").replace("%", ""))
         except:
             cnn_conf = 0.0
 
-        if cnn_conf >= CONFIDENCE_THRESHOLD:
+        if disease_from_cnn != "Uncertain" and cnn_conf >= CONFIDENCE_THRESHOLD:
             use_cnn = True
             decision_reason = "CNN prediction accepted (high confidence)"
         else:
-            decision_reason = "CNN confidence low, fallback to rule-based logic"
+            decision_reason = "CNN uncertain or low confidence → rule-based fallback"
 
-    # -------- DISEASE INFERENCE --------
+    # ---------- INFERENCE ----------
     if use_cnn:
-        disease = image_features.get("disease", "Unknown")
-        confidence = image_features.get("confidence", "N/A")
+        disease = image_features["disease"]
+        confidence = image_features["confidence"]
         inference_mode = "CNN_IMAGE_BASED"
         model_source = image_features.get("source", "cnn")
-
     else:
-        crop_diseases = [
-            d for d in DB[crop_type].keys() if d != "Healthy"
-        ]
+        crop_diseases = [d for d in DB[crop_type] if d != "Healthy"]
 
         if severity == "High" and crop_diseases:
             disease = crop_diseases[0]
@@ -78,7 +61,6 @@ def analyze_crop(image_features, crop_type, environment):
         inference_mode = "ENVIRONMENT_RULE_BASED"
         model_source = "rule_engine"
 
-    # -------- KNOWLEDGE BASE MATCH --------
     if disease not in DB[crop_type]:
         return {
             "status": "PARTIAL",
@@ -94,7 +76,6 @@ def analyze_crop(image_features, crop_type, environment):
 
     treatment = DB[crop_type][disease]["treatment"]
 
-    # -------- FINAL OUTPUT --------
     return {
         "status": "SUCCESS",
         "crop_type": crop_type,
