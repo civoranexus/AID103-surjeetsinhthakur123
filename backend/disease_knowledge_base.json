@@ -4,20 +4,34 @@
       "treatment": {
         "chemical": "Copper fungicide (minimal dose)",
         "organic": "Neem oil spray",
-        "prevention": "Crop rotation and proper spacing"
+        "prevention": "Crop rotation and proper plant spacing"
+      }
+    },
+    "Late Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Copper-based organic fungicide",
+        "prevention": "Avoid overhead irrigation and remove infected plants"
       }
     },
     "Leaf Curl Virus": {
       "treatment": {
         "chemical": "Imidacloprid only if severe",
         "organic": "Yellow sticky traps",
-        "prevention": "Whitefly control"
+        "prevention": "Whitefly control and resistant varieties"
+      }
+    },
+    "Anthracnose": {
+      "treatment": {
+        "chemical": "Chlorothalonil fungicide",
+        "organic": "Neem oil + Trichoderma",
+        "prevention": "Avoid fruit-soil contact and improve drainage"
       }
     },
     "Healthy": {
       "treatment": {
         "chemical": "No chemical treatment required",
-        "organic": "Maintain soil health",
+        "organic": "Maintain soil nutrition",
         "prevention": "Regular monitoring and balanced irrigation"
       }
     }
@@ -34,8 +48,15 @@
     "Late Blight": {
       "treatment": {
         "chemical": "Mancozeb fungicide",
-        "organic": "Copper-based organic fungicide",
+        "organic": "Copper-based fungicide",
         "prevention": "Use certified seeds and remove infected plants"
+      }
+    },
+    "Black Scurf": {
+      "treatment": {
+        "chemical": "Thiabendazole seed treatment",
+        "organic": "Biological seed treatment",
+        "prevention": "Proper soil drainage and crop rotation"
       }
     },
     "Healthy": {
@@ -62,10 +83,17 @@
         "prevention": "Maintain adequate plant spacing"
       }
     },
+    "Leaf Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Neem oil spray",
+        "prevention": "Balanced fertilization and crop rotation"
+      }
+    },
     "Healthy": {
       "treatment": {
         "chemical": "No chemical treatment required",
-        "organic": "Maintain soil nutrition",
+        "organic": "Maintain soil health",
         "prevention": "Timely sowing and irrigation"
       }
     }
@@ -84,6 +112,13 @@
         "chemical": "Carbendazim fungicide",
         "organic": "Organic compost enrichment",
         "prevention": "Improve soil fertility"
+      }
+    },
+    "Bacterial Leaf Blight": {
+      "treatment": {
+        "chemical": "Streptocycline spray (limited use)",
+        "organic": "Pseudomonas bio-spray",
+        "prevention": "Use resistant varieties and clean irrigation water"
       }
     },
     "Healthy": {
@@ -108,6 +143,13 @@
         "chemical": "Metalaxyl fungicide",
         "organic": "Biological seed treatment",
         "prevention": "Use disease-free seeds"
+      }
+    },
+    "Common Rust": {
+      "treatment": {
+        "chemical": "Propiconazole fungicide",
+        "organic": "Sulfur-based spray",
+        "prevention": "Use resistant hybrids"
       }
     },
     "Healthy": {

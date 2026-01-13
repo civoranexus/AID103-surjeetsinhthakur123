@@ -1,6 +1,10 @@
 import streamlit as st
 import requests
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+import io
 
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="CropGuard AI", layout="centered")
 
 st.title("🌱 CropGuard AI")
@@ -13,13 +17,7 @@ You can analyze crops **with or without uploading an image**.
 """)
 
 # ---------------- USER INPUTS ----------------
-CROP_OPTIONS = [
-    "Tomato",
-    "Potato",
-    "Wheat",
-    "Rice",
-    "Maize"
-]
+CROP_OPTIONS = ["Tomato", "Potato", "Wheat", "Rice", "Maize"]
 
 crop = st.selectbox("Select Crop", CROP_OPTIONS)
 
@@ -41,6 +39,46 @@ if image_file:
     st.info("Image-based analysis will be used (CNN).")
 else:
     st.info("No image uploaded. Analysis will be based on crop and environmental data.")
+
+# ---------------- PDF GENERATOR ----------------
+def generate_pdf(result, crop):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 50, "CropGuard AI – Disease Analysis Report")
+
+    c.setFont("Helvetica", 12)
+    y = height - 100
+
+    c.drawString(50, y, f"Crop: {crop}")
+    y -= 25
+    c.drawString(50, y, f"Disease Detected: {result.get('disease_detected')}")
+    y -= 25
+    c.drawString(50, y, f"Severity: {result.get('severity')}")
+    y -= 25
+    c.drawString(50, y, f"Confidence: {result.get('confidence')}")
+    y -= 40
+
+    advisory = result.get("advisory", {})
+    treatment = advisory.get("treatment", {})
+
+    c.drawString(50, y, f"Chemical Treatment: {treatment.get('chemical', 'N/A')}")
+    y -= 25
+    c.drawString(50, y, f"Organic Treatment: {treatment.get('organic', 'N/A')}")
+    y -= 25
+    c.drawString(50, y, f"Prevention: {treatment.get('prevention', 'N/A')}")
+    y -= 40
+
+    c.drawString(50, y, f"Pesticide Strategy: {advisory.get('pesticide_strategy', 'N/A')}")
+    y -= 25
+    c.drawString(50, y, f"Yield Impact: {advisory.get('yield_impact', 'N/A')}")
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+    return buffer
 
 # ---------------- ANALYZE ----------------
 if st.button("Analyze Crop"):
@@ -80,7 +118,6 @@ if st.button("Analyze Crop"):
 
                     # ---------- CONFIDENCE BAR ----------
                     confidence_value = result.get("confidence", "0")
-
                     if isinstance(confidence_value, str) and "%" in confidence_value:
                         try:
                             conf_percent = float(confidence_value.replace("%", ""))
@@ -88,34 +125,35 @@ if st.button("Analyze Crop"):
                             st.progress(conf_percent / 100)
                             st.caption(f"Confidence Level: {conf_percent:.2f}%")
                         except:
-                            st.caption("Confidence level not numeric")
-                    else:
-                        st.markdown("#### 🔍 Prediction Confidence")
-                        st.caption("Rule-based inference (no numeric confidence)")
+                            pass
 
                     # ---------- RISK SCORE ----------
                     risk_score = result.get("risk_score")
-
                     if isinstance(risk_score, (int, float)):
                         st.markdown("#### ⚠️ Risk Score")
                         st.progress(risk_score)
                         st.caption(f"Risk Score: {risk_score:.2f} (0 = Low, 1 = High)")
 
-
                     st.markdown("### 💊 Treatment & Advisory")
                     advisory = result.get("advisory", {})
                     treatment = advisory.get("treatment", {})
 
-                    if isinstance(treatment, dict):
-                        st.write("**Chemical Treatment:**", treatment.get("chemical", "N/A"))
-                        st.write("**Organic Treatment:**", treatment.get("organic", "N/A"))
-                        st.write("**Prevention:**", treatment.get("prevention", "N/A"))
-                    else:
-                        st.write(treatment)
+                    st.write("**Chemical Treatment:**", treatment.get("chemical", "N/A"))
+                    st.write("**Organic Treatment:**", treatment.get("organic", "N/A"))
+                    st.write("**Prevention:**", treatment.get("prevention", "N/A"))
 
                     st.markdown("### 🌾 Optimization Strategy")
                     st.write("**Pesticide Strategy:**", advisory.get("pesticide_strategy", "N/A"))
                     st.write("**Yield Impact:**", advisory.get("yield_impact", "N/A"))
+
+                    # ---------- PDF DOWNLOAD ----------
+                    pdf_buffer = generate_pdf(result, crop)
+                    st.download_button(
+                        label="📄 Download PDF Report",
+                        data=pdf_buffer,
+                        file_name="CropGuard_AI_Report.pdf",
+                        mime="application/pdf"
+                    )
 
         except requests.exceptions.RequestException as e:
             st.error("Failed to connect to backend.")
