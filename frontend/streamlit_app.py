@@ -134,6 +134,21 @@ if st.button("Analyze Crop"):
                         st.progress(risk_score)
                         st.caption(f"Risk Score: {risk_score:.2f} (0 = Low, 1 = High)")
 
+                    # ---------- EXPLAINABILITY IMAGE ----------
+                    explain_img_path = result.get("explainability_image")
+
+                    if explain_img_path:
+                        try:
+                            st.markdown("### 🔍 Explainable AI (Grad-CAM)")
+                            st.image(
+                                explain_img_path,
+                                caption="Highlighted disease-affected regions",
+                                use_column_width=True
+                            )
+                        except Exception as e:
+                            st.warning("Explainability image could not be displayed.")
+                            st.text(str(e))
+
                     st.markdown("### 💊 Treatment & Advisory")
                     advisory = result.get("advisory", {})
                     treatment = advisory.get("treatment", {})

@@ -1,64 +1,93 @@
 import tensorflow as tf
 import numpy as np
 import os
-from image_preprocessing import preprocess_image
+import cv2
 
-MODEL_PATH = "../model/crop_disease_cnn.h5"
+from image_preprocessing import preprocess_image
+from gradcam_utils import generate_gradcam
+
+MODEL_PATH = "model/crop_disease_cnn.h5"
 CLASS_LABELS = ["Early Blight", "Leaf Curl Virus", "Healthy"]
 
-CONFIDENCE_THRESHOLD = 60.0  # percent
-
 model = None
-MODEL_STATUS = "NOT_LOADED"
+print("MODEL PATH:", MODEL_PATH)
+print("MODEL EXISTS:", os.path.exists(MODEL_PATH))
 
+# ---------------- LOAD MODEL ----------------
 if os.path.exists(MODEL_PATH):
     try:
         model = tf.keras.models.load_model(MODEL_PATH)
-        MODEL_STATUS = "LOADED"
+        print("✅ CNN model loaded")
     except Exception as e:
-        print("⚠️ CNN model load error:", e)
-        MODEL_STATUS = "LOAD_FAILED"
+        print("❌ CNN model load error:", e)
+        model = None
 else:
-    MODEL_STATUS = "MODEL_NOT_FOUND"
+    print("❌ Model file not found")
 
 
+# ---------------- PREDICTION ----------------
 def extract_image_features(image_path):
     if model is None:
         return {
             "disease": "Early Blight",
             "confidence": "90%",
-            "source": "fallback",
-            "inference_source": "fallback",
-            "model_status": MODEL_STATUS
+            "source": "fallback"
         }
 
     img = preprocess_image(image_path)
     preds = model.predict(img)
-
-    probs = tf.nn.softmax(preds[0]).numpy()
-    idx = int(np.argmax(probs))
-    conf_percent = float(probs[idx] * 100)
-
-    if conf_percent < CONFIDENCE_THRESHOLD:
-        return {
-            "disease": "Uncertain",
-            "confidence": f"{conf_percent:.2f}%",
-            "source": "cnn",
-            "inference_source": "low_confidence",
-            "model_status": MODEL_STATUS
-        }
+    idx = int(np.argmax(preds))
+    conf = float(np.max(preds)) * 100
 
     return {
         "disease": CLASS_LABELS[idx],
-        "confidence": f"{conf_percent:.2f}%",
-        "source": "cnn",
-        "inference_source": "cnn",
-        "model_status": MODEL_STATUS,
-        "top_predictions": [
-            {
-                "label": CLASS_LABELS[i],
-                "probability": f"{probs[i] * 100:.2f}%"
-            }
-            for i in np.argsort(probs)[::-1][:3]
-        ]
+        "confidence": f"{conf:.2f}%",
+        "source": "cnn"
     }
+
+
+# ---------------- EXPLAINABLE AI (SAFE) ----------------
+def generate_explainability(image_path, last_conv_layer=None):
+    """
+    Generates Grad-CAM image safely.
+    Returns None if any error occurs.
+    """
+
+    if model is None:
+        return None
+
+    try:
+        img = cv2.imread(image_path)
+        if img is None:
+            return None
+
+        img = cv2.resize(img, (28, 28))
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        input_img = np.expand_dims(img_rgb / 255.0, axis=0)
+
+        # Auto-detect last conv layer if not provided
+        if last_conv_layer is None:
+            for layer in reversed(model.layers):
+                if "conv" in layer.name.lower():
+                    last_conv_layer = layer.name
+                    break
+
+        if last_conv_layer is None:
+            return None
+
+        heatmap = generate_gradcam(model, input_img, last_conv_layer)
+        heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
+        heatmap = np.uint8(255 * heatmap)
+
+        heatmap_color = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+        overlay = cv2.addWeighted(heatmap_color, 0.5, img, 0.5, 0)
+
+        base, _ = os.path.splitext(image_path)
+        output_path = base + "_gradcam.jpg"
+        cv2.imwrite(output_path, overlay)
+
+        return output_path
+
+    except Exception as e:
+        print("⚠️ Grad-CAM error:", e)
+        return None

@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
 import os
-from cnn_model import extract_image_features
+import traceback
+
+from cnn_model import extract_image_features, generate_explainability
 from ai_engine import analyze_crop
 
 app = Flask(__name__)
+
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -15,16 +18,22 @@ def analyze():
         temperature = float(request.form.get("temperature"))
 
         image_features = None
+        explain_image = None
 
-        # ---- IMAGE OPTIONAL ----
         if "image" in request.files:
             image = request.files["image"]
-            if image.filename != "":
+            if image and image.filename:
                 image_path = os.path.join(UPLOAD_DIR, image.filename)
                 image.save(image_path)
+
                 image_features = extract_image_features(image_path)
 
-        # ---- AI ANALYSIS ----
+                # ---- SAFE GRAD-CAM ----
+                try:
+                    explain_image = generate_explainability(image_path)
+                except:
+                    explain_image = None
+
         result = analyze_crop(
             image_features=image_features,
             crop_type=crop,
@@ -34,13 +43,18 @@ def analyze():
             }
         )
 
+        if explain_image:
+            result["explainability_image"] = os.path.abspath(explain_image).replace("\\", "/")
+
         return jsonify(result)
 
     except Exception as e:
+        traceback.print_exc()
         return jsonify({
             "error": "Backend exception",
             "message": str(e)
         }), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
