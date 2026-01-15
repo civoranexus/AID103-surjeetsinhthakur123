@@ -14,12 +14,17 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def analyze():
     try:
         crop = request.form.get("crop")
-        humidity = float(request.form.get("humidity"))
-        temperature = float(request.form.get("temperature"))
+
+        if not crop:
+            return jsonify({"error": "Crop not provided"}), 400
+
+        humidity = float(request.form.get("humidity", 0))
+        temperature = float(request.form.get("temperature", 0))
 
         image_features = None
         explain_image = None
 
+        # ---------- IMAGE OPTIONAL ----------
         if "image" in request.files:
             image = request.files["image"]
             if image and image.filename:
@@ -28,12 +33,12 @@ def analyze():
 
                 image_features = extract_image_features(image_path)
 
-                # ---- SAFE GRAD-CAM ----
                 try:
                     explain_image = generate_explainability(image_path)
-                except:
+                except Exception:
                     explain_image = None
 
+        # ---------- AI ENGINE ----------
         result = analyze_crop(
             image_features=image_features,
             crop_type=crop,
@@ -44,7 +49,9 @@ def analyze():
         )
 
         if explain_image:
-            result["explainability_image"] = os.path.abspath(explain_image).replace("\\", "/")
+            result["explainability_image"] = os.path.abspath(
+                explain_image
+            ).replace("\\", "/")
 
         return jsonify(result)
 

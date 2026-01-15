@@ -14,24 +14,32 @@ SEVERITY_RISK_MAP = {
 
 def analyze_crop(image_features, crop_type, environment):
 
+    # ---------- VALIDATION ----------
     if crop_type not in DB:
-        return {"status": "FAILED", "error": "Crop not supported"}
+        return {
+            "status": "FAILED",
+            "error": "Crop not supported"
+        }
 
-    severity = assess_severity(
+    # ---------- ENVIRONMENT SEVERITY ----------
+    env_severity = assess_severity(
         environment["humidity"],
         environment["temperature"]
     )
-    risk_score = SEVERITY_RISK_MAP.get(severity, 0.0)
 
-    # ---------- CNN VALIDATION ----------
+    risk_score = SEVERITY_RISK_MAP.get(env_severity, 0.0)
+
+    # ---------- CNN CONFIDENCE CHECK ----------
     use_cnn = False
     decision_reason = "Rule-based inference applied"
 
     if image_features:
-        disease_from_cnn = image_features.get("disease")
+        disease_from_cnn = image_features.get("disease", "Uncertain")
 
         try:
-            cnn_conf = float(image_features.get("confidence", "0").replace("%", ""))
+            cnn_conf = float(
+                image_features.get("confidence", "0").replace("%", "")
+            )
         except:
             cnn_conf = 0.0
 
@@ -39,20 +47,22 @@ def analyze_crop(image_features, crop_type, environment):
             use_cnn = True
             decision_reason = "CNN prediction accepted (high confidence)"
         else:
-            decision_reason = "CNN uncertain or low confidence → rule-based fallback"
+            decision_reason = "CNN low confidence → rule-based fallback"
 
-    # ---------- INFERENCE ----------
+    # ---------- DISEASE INFERENCE ----------
     if use_cnn:
-        disease = image_features["disease"]
+        disease = disease_from_cnn
         confidence = image_features["confidence"]
         inference_mode = "CNN_IMAGE_BASED"
         model_source = image_features.get("source", "cnn")
+
     else:
+        # Rule-based inference using environment
         crop_diseases = [d for d in DB[crop_type] if d != "Healthy"]
 
-        if severity == "High" and crop_diseases:
+        if env_severity == "High" and crop_diseases:
             disease = crop_diseases[0]
-        elif severity == "Medium" and len(crop_diseases) > 1:
+        elif env_severity == "Medium" and len(crop_diseases) > 1:
             disease = crop_diseases[1]
         else:
             disease = "Healthy"
@@ -61,12 +71,13 @@ def analyze_crop(image_features, crop_type, environment):
         inference_mode = "ENVIRONMENT_RULE_BASED"
         model_source = "rule_engine"
 
+    # ---------- KNOWLEDGE BASE CHECK ----------
     if disease not in DB[crop_type]:
         return {
             "status": "PARTIAL",
             "crop_type": crop_type,
             "disease_detected": disease,
-            "severity": severity,
+            "severity": env_severity,
             "risk_score": risk_score,
             "confidence": confidence,
             "inference_mode": inference_mode,
@@ -74,13 +85,17 @@ def analyze_crop(image_features, crop_type, environment):
             "treatment_available": False
         }
 
-    treatment = DB[crop_type][disease]["treatment"]
+    disease_info = DB[crop_type][disease]
+    treatment = disease_info.get("treatment", {})
+
+    # Prefer KB severity if defined
+    final_severity = disease_info.get("severity_level", env_severity)
 
     return {
         "status": "SUCCESS",
         "crop_type": crop_type,
         "disease_detected": disease,
-        "severity": severity,
+        "severity": final_severity,
         "risk_score": risk_score,
         "confidence": confidence,
         "inference_mode": inference_mode,
@@ -88,7 +103,7 @@ def analyze_crop(image_features, crop_type, environment):
         "decision_reason": decision_reason,
         "advisory": {
             "treatment": treatment,
-            "pesticide_strategy": pesticide_optimization(severity),
+            "pesticide_strategy": pesticide_optimization(final_severity),
             "yield_impact": "Early intervention improves yield"
         }
     }

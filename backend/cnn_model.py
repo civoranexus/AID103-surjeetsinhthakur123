@@ -6,14 +6,17 @@ import cv2
 from image_preprocessing import preprocess_image
 from gradcam_utils import generate_gradcam
 
-MODEL_PATH = "model/crop_disease_cnn.h5"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model", "crop_disease_cnn.h5")
+
 CLASS_LABELS = ["Early Blight", "Leaf Curl Virus", "Healthy"]
 
 model = None
+
 print("MODEL PATH:", MODEL_PATH)
 print("MODEL EXISTS:", os.path.exists(MODEL_PATH))
 
-# ---------------- LOAD MODEL ----------------
+# ---------- LOAD MODEL ----------
 if os.path.exists(MODEL_PATH):
     try:
         model = tf.keras.models.load_model(MODEL_PATH)
@@ -25,7 +28,7 @@ else:
     print("❌ Model file not found")
 
 
-# ---------------- PREDICTION ----------------
+# ---------- CNN PREDICTION ----------
 def extract_image_features(image_path):
     if model is None:
         return {
@@ -36,6 +39,7 @@ def extract_image_features(image_path):
 
     img = preprocess_image(image_path)
     preds = model.predict(img)
+
     idx = int(np.argmax(preds))
     conf = float(np.max(preds)) * 100
 
@@ -46,12 +50,8 @@ def extract_image_features(image_path):
     }
 
 
-# ---------------- EXPLAINABLE AI (SAFE) ----------------
+# ---------- GRAD-CAM ----------
 def generate_explainability(image_path, last_conv_layer=None):
-    """
-    Generates Grad-CAM image safely.
-    Returns None if any error occurs.
-    """
 
     if model is None:
         return None
@@ -65,7 +65,7 @@ def generate_explainability(image_path, last_conv_layer=None):
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         input_img = np.expand_dims(img_rgb / 255.0, axis=0)
 
-        # Auto-detect last conv layer if not provided
+        # Auto-detect last conv layer
         if last_conv_layer is None:
             for layer in reversed(model.layers):
                 if "conv" in layer.name.lower():
