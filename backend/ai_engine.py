@@ -21,12 +21,10 @@ def analyze_crop(image_features, crop_type, environment):
             "error": "Crop not supported"
         }
 
-    # ---------- ENVIRONMENT SEVERITY ----------
-    env_severity = assess_severity(
-        environment["humidity"],
-        environment["temperature"]
-    )
+    humidity = environment.get("humidity", 0)
+    temperature = environment.get("temperature", 0)
 
+    env_severity = assess_severity(humidity, temperature)
     risk_score = SEVERITY_RISK_MAP.get(env_severity, 0.0)
 
     # ---------- CNN CONFIDENCE CHECK ----------
@@ -37,9 +35,7 @@ def analyze_crop(image_features, crop_type, environment):
         disease_from_cnn = image_features.get("disease", "Uncertain")
 
         try:
-            cnn_conf = float(
-                image_features.get("confidence", "0").replace("%", "")
-            )
+            cnn_conf = float(image_features.get("confidence", "0").replace("%", ""))
         except:
             cnn_conf = 0.0
 
@@ -50,22 +46,37 @@ def analyze_crop(image_features, crop_type, environment):
             decision_reason = "CNN low confidence → rule-based fallback"
 
     # ---------- DISEASE INFERENCE ----------
+    reasoning_clues = []
+
     if use_cnn:
         disease = disease_from_cnn
         confidence = image_features["confidence"]
         inference_mode = "CNN_IMAGE_BASED"
         model_source = image_features.get("source", "cnn")
+        reasoning_clues.append("Visual symptoms detected from leaf image")
 
     else:
-        # Rule-based inference using environment
-        crop_diseases = [d for d in DB[crop_type] if d != "Healthy"]
+        # Knowledge-aware rule-based inference
+        candidate_diseases = []
 
-        if env_severity == "High" and crop_diseases:
-            disease = crop_diseases[0]
-        elif env_severity == "Medium" and len(crop_diseases) > 1:
-            disease = crop_diseases[1]
+        for d_name, d_info in DB[crop_type].items():
+            if d_name == "Healthy":
+                continue
+
+            risk_cond = d_info.get("risk_conditions", {})
+            risk_h = risk_cond.get("humidity", "")
+            risk_t = risk_cond.get("temperature", "")
+
+            if (">" in risk_h and humidity >= int(risk_h.replace(">", ""))) or \
+               (">" in risk_t and temperature >= int(risk_t.replace(">", ""))):
+                candidate_diseases.append(d_name)
+
+        if candidate_diseases:
+            disease = candidate_diseases[0]
+            reasoning_clues.append("Environmental conditions favor this disease")
         else:
             disease = "Healthy"
+            reasoning_clues.append("No strong disease-favoring conditions detected")
 
         confidence = "RULE_BASED"
         inference_mode = "ENVIRONMENT_RULE_BASED"
@@ -82,13 +93,12 @@ def analyze_crop(image_features, crop_type, environment):
             "confidence": confidence,
             "inference_mode": inference_mode,
             "decision_reason": decision_reason,
+            "reasoning_clues": reasoning_clues,
             "treatment_available": False
         }
 
     disease_info = DB[crop_type][disease]
     treatment = disease_info.get("treatment", {})
-
-    # Prefer KB severity if defined
     final_severity = disease_info.get("severity_level", env_severity)
 
     return {
@@ -101,6 +111,7 @@ def analyze_crop(image_features, crop_type, environment):
         "inference_mode": inference_mode,
         "model_source": model_source,
         "decision_reason": decision_reason,
+        "reasoning_clues": reasoning_clues,
         "advisory": {
             "treatment": treatment,
             "pesticide_strategy": pesticide_optimization(final_severity),

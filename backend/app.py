@@ -1,3 +1,4 @@
+from unittest import result
 from flask import Flask, request, jsonify
 import os
 import traceback
@@ -52,6 +53,10 @@ def analyze():
             result["explainability_image"] = os.path.abspath(
                 explain_image
             ).replace("\\", "/")
+        
+        # Add reasoning clues to the result for explainability text
+        if "reasoning_clues" in result:
+            result["explainability_text"] = result["reasoning_clues"]
 
         return jsonify(result)
 

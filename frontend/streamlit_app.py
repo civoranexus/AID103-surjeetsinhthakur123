@@ -116,6 +116,15 @@ if st.button("Analyze Crop"):
                     st.write("**Severity:**", result.get("severity"))
                     st.write("**Confidence:**", result.get("confidence"))
 
+                # ---------- REASONING CLUES ----------
+                reasoning = result.get("reasoning_clues", [])
+
+                if reasoning:
+                    st.markdown("### 🧩 Explainable AI – Reasoning")
+                    for clue in reasoning:
+                        st.markdown(f"- {clue}")
+
+
                     # ---------- CONFIDENCE BAR ----------
                     confidence_value = result.get("confidence", "0")
                     if isinstance(confidence_value, str) and "%" in confidence_value:
