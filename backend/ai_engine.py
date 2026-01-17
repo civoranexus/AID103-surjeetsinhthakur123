@@ -12,6 +12,16 @@ SEVERITY_RISK_MAP = {
     "High": 0.8
 }
 
+def _normalize_disease_name(raw_name: str) -> str:
+    """
+    Converts CNN disease part to KB-compatible format
+    Example:
+    Early_blight -> Early Blight
+    Tomato_Yellow_Leaf_Curl_Virus -> Tomato Yellow Leaf Curl Virus
+    """
+    return raw_name.replace("_", " ").title().strip()
+
+
 def analyze_crop(image_features, crop_type, environment):
 
     # ---------- VALIDATION ----------
@@ -27,36 +37,49 @@ def analyze_crop(image_features, crop_type, environment):
     env_severity = assess_severity(humidity, temperature)
     risk_score = SEVERITY_RISK_MAP.get(env_severity, 0.0)
 
-    # ---------- CNN CONFIDENCE CHECK ----------
     use_cnn = False
     decision_reason = "Rule-based inference applied"
+    reasoning_clues = []
 
+    disease = None
+    confidence = None
+    inference_mode = None
+    model_source = None
+
+    # ---------- CNN-BASED INFERENCE ----------
     if image_features:
-        disease_from_cnn = image_features.get("disease", "Uncertain")
+        raw_label = image_features.get("disease", "")
+        confidence_str = image_features.get("confidence", "0")
 
         try:
-            cnn_conf = float(image_features.get("confidence", "0").replace("%", ""))
+            cnn_conf = float(confidence_str.replace("%", ""))
         except:
             cnn_conf = 0.0
 
-        if disease_from_cnn != "Uncertain" and cnn_conf >= CONFIDENCE_THRESHOLD:
-            use_cnn = True
-            decision_reason = "CNN prediction accepted (high confidence)"
+        # Expecting format: Crop___Disease
+        if "___" in raw_label:
+            cnn_crop, cnn_disease_raw = raw_label.split("___", 1)
+            cnn_disease = _normalize_disease_name(cnn_disease_raw)
         else:
-            decision_reason = "CNN low confidence → rule-based fallback"
+            cnn_crop = None
+            cnn_disease = None
 
-    # ---------- DISEASE INFERENCE ----------
-    reasoning_clues = []
+        if cnn_crop == crop_type and cnn_conf >= CONFIDENCE_THRESHOLD:
+            use_cnn = True
+            disease = cnn_disease
+            confidence = confidence_str
+            inference_mode = "CNN_IMAGE_BASED"
+            model_source = image_features.get("source", "cnn")
 
-    if use_cnn:
-        disease = disease_from_cnn
-        confidence = image_features["confidence"]
-        inference_mode = "CNN_IMAGE_BASED"
-        model_source = image_features.get("source", "cnn")
-        reasoning_clues.append("Visual symptoms detected from leaf image")
+            decision_reason = "CNN prediction accepted (high confidence)"
+            reasoning_clues.append("Visual disease patterns detected from leaf image")
+        else:
+            reasoning_clues.append(
+                "CNN confidence low or crop mismatch → rule-based fallback"
+            )
 
-    else:
-        # Knowledge-aware rule-based inference
+    # ---------- RULE-BASED FALLBACK ----------
+    if not use_cnn:
         candidate_diseases = []
 
         for d_name, d_info in DB[crop_type].items():
@@ -67,8 +90,10 @@ def analyze_crop(image_features, crop_type, environment):
             risk_h = risk_cond.get("humidity", "")
             risk_t = risk_cond.get("temperature", "")
 
-            if (">" in risk_h and humidity >= int(risk_h.replace(">", ""))) or \
-               (">" in risk_t and temperature >= int(risk_t.replace(">", ""))):
+            h_match = (">" in risk_h and humidity >= int(risk_h.replace(">", "")))
+            t_match = (">" in risk_t and temperature >= int(risk_t.replace(">", "")))
+
+            if h_match or t_match:
                 candidate_diseases.append(d_name)
 
         if candidate_diseases:
