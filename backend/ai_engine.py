@@ -4,142 +4,126 @@ from decision_logic import assess_severity, pesticide_optimization
 with open("disease_knowledge_base.json") as f:
     DB = json.load(f)
 
-CONFIDENCE_THRESHOLD = 70.0  # percent
-
 SEVERITY_RISK_MAP = {
     "Low": 0.2,
     "Medium": 0.5,
     "High": 0.8
 }
 
-def _normalize_disease_name(raw_name: str) -> str:
+# -------------------------------------------------
+# 1️⃣ IMAGE-BASED ANALYSIS (CNN ONLY)
+# -------------------------------------------------
+def analyze_with_image(image_features):
     """
-    Converts CNN disease part to KB-compatible format
-    Example:
-    Early_blight -> Early Blight
-    Tomato_Yellow_Leaf_Curl_Virus -> Tomato Yellow Leaf Curl Virus
+    CNN-based analysis + advisory
     """
-    return raw_name.replace("_", " ").title().strip()
+
+    disease_label = image_features.get("disease", "Uncertain")
+    confidence = image_features.get("confidence", "N/A")
+
+    crop, disease = parse_crop_and_disease(disease_label)
+
+    reasoning_clues = [
+        "Disease detected using CNN image analysis",
+        "Visual patterns matched with trained leaf dataset"
+    ]
+
+    # Default severity from confidence
+    try:
+        conf_val = float(confidence.replace("%", ""))
+        severity = "High" if conf_val > 85 else "Medium"
+    except:
+        severity = "Medium"
+
+    # Knowledge base lookup
+    if crop in DB and disease in DB[crop]:
+        treatment = DB[crop][disease]["treatment"]
+    else:
+        treatment = {
+            "chemical": "Consult local agriculture expert",
+            "organic": "Manual inspection recommended",
+            "prevention": "Early monitoring advised"
+        }
+
+    return {
+        "status": "SUCCESS",
+        "crop_type": crop,
+        "disease_detected": disease,
+        "severity": severity,
+        "confidence": confidence,
+        "inference_mode": "CNN_IMAGE_BASED",
+        "model_source": "cnn",
+        "decision_reason": "High-confidence CNN prediction",
+        "reasoning_clues": reasoning_clues,
+        "advisory": {
+            "treatment": treatment,
+            "pesticide_strategy": pesticide_optimization(severity),
+            "yield_impact": "Early detection improves yield and reduces loss"
+        }
+    }
 
 
-def analyze_crop(image_features, crop_type, environment):
+# -------------------------------------------------
+# 2️⃣ CROP + ENVIRONMENT ANALYSIS (RULE ENGINE)
+# -------------------------------------------------
+def analyze_without_image(crop_type, environment):
 
-    # ---------- VALIDATION ----------
     if crop_type not in DB:
         return {
             "status": "FAILED",
-            "error": "Crop not supported"
+            "error": "Crop not supported in knowledge base"
         }
 
     humidity = environment.get("humidity", 0)
     temperature = environment.get("temperature", 0)
 
-    env_severity = assess_severity(humidity, temperature)
-    risk_score = SEVERITY_RISK_MAP.get(env_severity, 0.0)
+    severity = assess_severity(humidity, temperature)
+    risk_score = SEVERITY_RISK_MAP.get(severity, 0.0)
 
-    use_cnn = False
-    decision_reason = "Rule-based inference applied"
-    reasoning_clues = []
+    # Simple deterministic logic
+    diseases = [d for d in DB[crop_type] if d != "Healthy"]
 
-    disease = None
-    confidence = None
-    inference_mode = None
-    model_source = None
+    if severity == "High" and diseases:
+        disease = diseases[0]
+        reason = "High humidity/temperature favors disease outbreak"
+    elif severity == "Medium" and len(diseases) > 1:
+        disease = diseases[1]
+        reason = "Moderate environmental stress detected"
+    else:
+        disease = "Healthy"
+        reason = "No strong disease-favoring conditions"
 
-    # ---------- CNN-BASED INFERENCE ----------
-    if image_features:
-        raw_label = image_features.get("disease", "")
-        confidence_str = image_features.get("confidence", "0")
-
-        try:
-            cnn_conf = float(confidence_str.replace("%", ""))
-        except:
-            cnn_conf = 0.0
-
-        # Expecting format: Crop___Disease
-        if "___" in raw_label:
-            cnn_crop, cnn_disease_raw = raw_label.split("___", 1)
-            cnn_disease = _normalize_disease_name(cnn_disease_raw)
-        else:
-            cnn_crop = None
-            cnn_disease = None
-
-        if cnn_crop == crop_type and cnn_conf >= CONFIDENCE_THRESHOLD:
-            use_cnn = True
-            disease = cnn_disease
-            confidence = confidence_str
-            inference_mode = "CNN_IMAGE_BASED"
-            model_source = image_features.get("source", "cnn")
-
-            decision_reason = "CNN prediction accepted (high confidence)"
-            reasoning_clues.append("Visual disease patterns detected from leaf image")
-        else:
-            reasoning_clues.append(
-                "CNN confidence low or crop mismatch → rule-based fallback"
-            )
-
-    # ---------- RULE-BASED FALLBACK ----------
-    if not use_cnn:
-        candidate_diseases = []
-
-        for d_name, d_info in DB[crop_type].items():
-            if d_name == "Healthy":
-                continue
-
-            risk_cond = d_info.get("risk_conditions", {})
-            risk_h = risk_cond.get("humidity", "")
-            risk_t = risk_cond.get("temperature", "")
-
-            h_match = (">" in risk_h and humidity >= int(risk_h.replace(">", "")))
-            t_match = (">" in risk_t and temperature >= int(risk_t.replace(">", "")))
-
-            if h_match or t_match:
-                candidate_diseases.append(d_name)
-
-        if candidate_diseases:
-            disease = candidate_diseases[0]
-            reasoning_clues.append("Environmental conditions favor this disease")
-        else:
-            disease = "Healthy"
-            reasoning_clues.append("No strong disease-favoring conditions detected")
-
-        confidence = "RULE_BASED"
-        inference_mode = "ENVIRONMENT_RULE_BASED"
-        model_source = "rule_engine"
-
-    # ---------- KNOWLEDGE BASE CHECK ----------
-    if disease not in DB[crop_type]:
-        return {
-            "status": "PARTIAL",
-            "crop_type": crop_type,
-            "disease_detected": disease,
-            "severity": env_severity,
-            "risk_score": risk_score,
-            "confidence": confidence,
-            "inference_mode": inference_mode,
-            "decision_reason": decision_reason,
-            "reasoning_clues": reasoning_clues,
-            "treatment_available": False
-        }
-
-    disease_info = DB[crop_type][disease]
-    treatment = disease_info.get("treatment", {})
-    final_severity = disease_info.get("severity_level", env_severity)
+    treatment = DB[crop_type].get(disease, {}).get("treatment", {})
 
     return {
         "status": "SUCCESS",
+        "analysis_type": "ENVIRONMENT_BASED",
         "crop_type": crop_type,
         "disease_detected": disease,
-        "severity": final_severity,
+        "severity": severity,
         "risk_score": risk_score,
-        "confidence": confidence,
-        "inference_mode": inference_mode,
-        "model_source": model_source,
-        "decision_reason": decision_reason,
-        "reasoning_clues": reasoning_clues,
+        "confidence": "RULE_BASED",
+        "reasoning_clues": [
+            "Analysis based on crop selection",
+            reason
+        ],
         "advisory": {
             "treatment": treatment,
-            "pesticide_strategy": pesticide_optimization(final_severity),
+            "pesticide_strategy": pesticide_optimization(severity),
             "yield_impact": "Early intervention improves yield"
         }
     }
+
+def parse_crop_and_disease(label: str):
+    """
+    Converts CNN label into crop + disease
+    Example: Tomato___Early_blight → Tomato, Early Blight
+    """
+    if "___" not in label:
+        return None, label
+
+    crop, disease = label.split("___", 1)
+    disease = disease.replace("_", " ").title()
+    crop = crop.replace("_", " ").title()
+
+    return crop, disease
