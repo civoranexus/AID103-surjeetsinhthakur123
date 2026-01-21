@@ -2,6 +2,10 @@ import streamlit as st
 import requests
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import qrcode
+import os
 import io
 
 # ================= LANGUAGE DICTIONARY =================
@@ -138,18 +142,61 @@ with left:
         st.info(t("no_image"))
 
 # ================= PDF =================
-def generate_pdf(result):
+def generate_pdf(result, t):
     buffer = io.BytesIO()
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    font_path = os.path.join(BASE_DIR, "fonts", "NotoSansDevanagari-Regular.ttf")
+
+    pdfmetrics.registerFont(TTFont("Deva", font_path))
+
+    # -------- QR CODE DATA --------
+    qr_text = f"""
+Crop: {result.get('crop_type')}
+Disease: {result.get('disease_detected')}
+Severity: {result.get('severity')}
+Confidence: {result.get('confidence')}
+"""
+
+    qr = qrcode.make(qr_text)
+    qr_path = os.path.join(BASE_DIR, "temp_qr.png")
+    qr.save(qr_path)
+
     c = canvas.Canvas(buffer, pagesize=A4)
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(50, 800, "CropGuard AI Report")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 760, f"{t('disease')}: {result.get('disease_detected')}")
-    c.drawString(50, 740, f"{t('severity')}: {result.get('severity')}")
-    c.drawString(50, 720, f"{t('confidence')}: {result.get('confidence')}")
+    width, height = A4
+
+    c.setFont("Deva", 16)
+    c.drawString(50, height - 50, f"{t('title')} – Report")
+
+    c.setFont("Deva", 12)
+    y = height - 100
+
+    c.drawString(50, y, f"{t('crop_detected')}: {result.get('crop_type')}")
+    y -= 25
+    c.drawString(50, y, f"{t('disease')}: {result.get('disease_detected')}")
+    y -= 25
+    c.drawString(50, y, f"{t('severity')}: {result.get('severity')}")
+    y -= 25
+    c.drawString(50, y, f"{t('confidence')}: {result.get('confidence')}")
+    y -= 40
+
+    treatment = result.get("advisory", {}).get("treatment", {})
+    c.drawString(50, y, f"{t('chemical')}: {treatment.get('chemical', 'N/A')}")
+    y -= 25
+    c.drawString(50, y, f"{t('organic')}: {treatment.get('organic', 'N/A')}")
+    y -= 25
+    c.drawString(50, y, f"{t('prevention')}: {treatment.get('prevention', 'N/A')}")
+
+    # -------- QR CODE ON PDF --------
+    c.drawImage(qr_path, width - 160, 60, 100, 100)
+    c.setFont("Deva", 9)
+    c.drawString(width - 170, 45, "Scan QR for summary")
+
     c.showPage()
     c.save()
     buffer.seek(0)
+
+    os.remove(qr_path)
     return buffer
 
 # ================= ANALYZE =================
@@ -197,7 +244,7 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         st.write(f"**{t('organic')}:** {treatment.get('organic', 'N/A')}")
         st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
 
-        pdf = generate_pdf(result)
+        pdf = generate_pdf(result, t)
         st.download_button(
             t("download"),
             pdf,
