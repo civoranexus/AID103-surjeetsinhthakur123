@@ -11,6 +11,7 @@ import io
 # ================= LANGUAGE DICTIONARY =================
 LANG = {
     "English": {
+        "lang_code": "en",
         "title": "CropGuard AI",
         "subtitle": "Intelligent Crop Disease Detection Platform",
         "input_params": "Input Parameters",
@@ -39,6 +40,7 @@ LANG = {
         "gradcam": "Grad-CAM Visualization"
     },
     "Hindi": {
+        "lang_code": "hi",
         "title": "क्रॉपगार्ड एआई",
         "subtitle": "बुद्धिमान फसल रोग पहचान प्रणाली",
         "input_params": "इनपुट पैरामीटर",
@@ -67,6 +69,7 @@ LANG = {
         "gradcam": "ग्रैड-कैम दृश्य"
     },
     "Marathi": {
+        "lang_code": "mr",
         "title": "क्रॉपगार्ड एआय",
         "subtitle": "बुद्धिमान पीक रोग ओळख प्रणाली",
         "input_params": "इनपुट घटक",
@@ -206,7 +209,7 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
     with st.spinner("AI Processing..."):
         response = requests.post(
             "http://127.0.0.1:5000/analyze",
-            data={"crop": crop, "humidity": humidity, "temperature": temperature},
+            data={"crop": crop, "humidity": humidity, "temperature": temperature, "language": T["lang_code"]},
             files={"image": image_file} if image_file else None
         )
 
@@ -226,6 +229,12 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         st.metric(t("disease"), result.get("disease_detected"))
         st.metric(t("severity"), result.get("severity"))
         st.metric(t("confidence"), result.get("confidence"))
+
+        # ================= 🔊 VOICE SUMMARY =================
+        voice_file = result.get("voice_summary")
+        if voice_file:
+            st.markdown("### 🔊 Voice Summary")
+            st.audio(voice_file, format="audio/mp3")
 
         reasoning = result.get("reasoning_clues", [])
         if reasoning:
