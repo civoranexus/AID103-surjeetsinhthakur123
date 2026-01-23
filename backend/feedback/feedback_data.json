@@ -1,0 +1,66 @@
+[
+  {
+    "id": "f64aad856ac54ec592f504028e8e8f55",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "1162cef5082c4452a9d639c2cf7db725",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "3893097caa4545c7b5785c698a7ab87b",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "a98d258beea646109336b7c1ca1dc817",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "731070879e6a450eb0d56d88221ec3e6",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "a0d0ee4413334c8487ffd2584474cdc7",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "af575078146947c29f84aeeae215c730",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "70672baffa3f4b30929dffc7ae3dcd08",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  }
+]

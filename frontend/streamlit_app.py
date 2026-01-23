@@ -214,6 +214,7 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         )
 
         result = response.json()
+        st.session_state.analysis_result = result
 
         st.markdown(f"## 🧠 {t('result')}")
 
@@ -260,3 +261,73 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
             "CropGuard_AI_Report.pdf",
             "application/pdf"
         )
+# ================= FEEDBACK =================
+st.markdown("---")
+st.markdown("### 📝 Farmer Feedback")
+
+result = st.session_state.get("analysis_result")
+
+if result is None:
+    st.info("ℹ️ Analyze a crop to give feedback")
+else:
+    col1, col2, col3 = st.columns(3)
+
+    # ---------- ✅ CORRECT ----------
+    with col1:
+        if st.button("👍 Correct"):
+            feedback_payload = {
+                "crop": result.get("crop_type"),
+                "disease": result.get("disease_detected"),
+                "confidence": result.get("confidence"),
+                "correct": True,
+                "comment": "Prediction is correct"
+            }
+
+            requests.post(
+                "http://127.0.0.1:5000/feedback",
+                json=feedback_payload
+            )
+
+            st.success("✅ Thank you! Feedback recorded.")
+
+    # ---------- ❌ INCORRECT ----------
+    with col2:
+        if st.button("👎 Incorrect"):
+            feedback_payload = {
+                "crop": result.get("crop_type"),
+                "disease": result.get("disease_detected"),
+                "confidence": result.get("confidence"),
+                "correct": False,
+                "comment": "Prediction is incorrect"
+            }
+
+            requests.post(
+                "http://127.0.0.1:5000/feedback",
+                json=feedback_payload
+            )
+
+            st.warning("❌ Feedback recorded as incorrect.")
+
+    # ---------- ❓ OTHER QUERY ----------
+    with col3:
+        other_comment = st.text_input("❓ Other issue / suggestion")
+
+        if st.button("📩 Submit Query"):
+            if other_comment.strip() == "":
+                st.warning("Please enter your query")
+            else:
+                feedback_payload = {
+                    "crop": result.get("crop_type"),
+                    "disease": result.get("disease_detected"),
+                    "confidence": result.get("confidence"),
+                    "correct": None,
+                    "comment": other_comment
+                }
+
+                requests.post(
+                    "http://127.0.0.1:5000/feedback",
+                    json=feedback_payload
+                )
+
+                st.success("📩 Query submitted successfully")
+
