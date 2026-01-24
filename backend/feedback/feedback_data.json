@@ -62,5 +62,29 @@
     "confidence": "RULE_BASED",
     "correct": false,
     "comment": "Prediction is incorrect"
+  },
+  {
+    "id": "15374f2b9f514e578855a3057dec9b66",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": ""
+  },
+  {
+    "id": "1b29e209d53744fb9db96280c9f6080e",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Need proper solution"
+  },
+  {
+    "id": "d610e70daf8d41a4810aabeb835f649e",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": ""
   }
 ]

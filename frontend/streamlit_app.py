@@ -331,3 +331,33 @@ else:
 
                 st.success("📩 Query submitted successfully")
 
+    st.markdown("## 📋 Post-Treatment Feedback")
+
+    outcome = st.selectbox(
+        "What happened after treatment?",
+        ["Recovered", "No Change", "Condition Worsened"]
+    )
+
+    yield_change = st.selectbox(
+        "Yield impact",
+        ["Improved", "Same", "Reduced"]
+    )
+
+    days = st.number_input("Days after treatment", min_value=1, max_value=30)
+
+    comment = st.text_area("Additional comments (optional)")
+
+    if st.button("📨 Submit Outcome Feedback"):
+        feedback_payload = {
+            "crop": result.get("crop_type"),
+            "disease": result.get("disease_detected"),
+            "confidence": result.get("confidence"),
+            "correct": True,
+            "outcome": outcome,
+            "yield_change": yield_change,
+            "days_after_treatment": days,
+            "comment": comment
+        }
+
+        requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
+        st.success("✅ Thank you! Your feedback helps improve the AI.")
