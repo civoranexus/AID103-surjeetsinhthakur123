@@ -13,6 +13,11 @@ from ai_engine import analyze_with_image, analyze_without_image
 # =========================================================
 app = Flask(__name__)
 
+EXPERTS = {
+    "whatsapp": "919876543210",
+    "helpline": "+91-1800-123-456"
+}
+
 UPLOAD_DIR = "uploads"
 FEEDBACK_DIR = "feedback"
 FEEDBACK_FILE = os.path.join(FEEDBACK_DIR, "feedback_data.json")
@@ -81,6 +86,24 @@ def analyze():
                     "temperature": temperature
                 }
             )
+        
+        # ================= LOW CONFIDENCE =================
+        raw_confidence = result.get("confidence", 0)
+
+        if isinstance(raw_confidence, (int, float)):
+            confidence = float(raw_confidence)
+        else:
+            # For RULE_BASED or other string types
+            confidence = 50.0   # default assumed confidence
+            result["confidence_type"] = raw_confidence
+
+        # ================= EXPERT CONNECT =================
+        result["expert_connect"] = {
+            "enabled": confidence < 60,
+            "reason": "Low AI confidence",
+            "whatsapp": f"https://wa.me/{EXPERTS['whatsapp']}",
+            "helpline": EXPERTS["helpline"]
+        }
 
         # =================================================
         # ================ VOICE SUMMARY ==================

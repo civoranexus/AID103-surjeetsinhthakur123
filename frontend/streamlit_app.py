@@ -254,6 +254,14 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         st.write(f"**{t('organic')}:** {treatment.get('organic', 'N/A')}")
         st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
 
+            # ---------- EXPERT CONNECT ----------
+    expert = result.get("expert_connect")
+    if expert and expert["enabled"]:
+        st.subheader("👨‍⚕️ Expert Help Recommended")
+        st.write(expert["reason"])
+        st.markdown(f"[💬 WhatsApp Expert]({expert['whatsapp']})")
+        st.write(f"📞 Helpline: {expert['helpline']}")
+
         pdf = generate_pdf(result, t)
         st.download_button(
             t("download"),
