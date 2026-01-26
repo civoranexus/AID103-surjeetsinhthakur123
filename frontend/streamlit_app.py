@@ -207,14 +207,33 @@ st.markdown("---")
 
 if st.button(f"🔍 {t('analyze')}", use_container_width=True):
     with st.spinner("AI Processing..."):
-        response = requests.post(
-            "http://127.0.0.1:5000/analyze",
-            data={"crop": crop, "humidity": humidity, "temperature": temperature, "language": T["lang_code"]},
-            files={"image": image_file} if image_file else None
-        )
 
-        result = response.json()
-        st.session_state.analysis_result = result
+        # >>> ADDED: SAFE API CALL
+        try:
+            response = requests.post(
+                "http://127.0.0.1:5000/analyze",
+                data={
+                    "crop": crop,
+                    "humidity": humidity,
+                    "temperature": temperature,
+                    "language": T["lang_code"]
+                },
+                files={"image": image_file} if image_file else None,
+                timeout=60
+            )
+
+            if response.status_code != 200:
+                st.error("⚠️ Server error. Please try again.")
+                st.stop()
+
+            result = response.json()
+            st.session_state.analysis_result = result
+
+        except requests.exceptions.RequestException:
+            st.error("🚫 Unable to connect to AI server.")
+            st.stop()
+
+        st.toast("Analysis completed ✅")  
 
         st.markdown(f"## 🧠 {t('result')}")
 
@@ -231,37 +250,48 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         st.metric(t("severity"), result.get("severity"))
         st.metric(t("confidence"), result.get("confidence"))
 
+        # >>> ADDED: CONFIDENCE VISUALIZATION
+        conf = result.get("confidence", 0)
+        try:
+            st.progress(int(float(conf) * 100))
+            st.caption("Model confidence based on CNN + environmental features")
+        except:
+            st.info("Confidence calculated using rule-based logic")
+
         # ================= 🔊 VOICE SUMMARY =================
         voice_file = result.get("voice_summary")
         if voice_file:
             st.markdown("### 🔊 Voice Summary")
             st.audio(voice_file, format="audio/mp3")
 
+        # ================= EXPLAINABLE AI =================
         reasoning = result.get("reasoning_clues", [])
         if reasoning:
-            st.markdown(f"### 🧩 {t('reasoning')}")
-            for r in reasoning:
-                st.markdown(f"- {r}")
+            with st.expander(f"🧩 {t('reasoning')}"):
+                for r in reasoning:
+                    st.markdown(f"- {r}")
 
+        # ================= GRAD-CAM =================
         explain_img = result.get("explainability_image")
         if explain_img:
-            st.markdown(f"### 🔍 {t('gradcam')}")
-            st.image(explain_img, use_column_width=True)
+            with st.expander(f"🔍 {t('gradcam')}"):
+                st.image(explain_img, use_column_width=True)
 
+        # ================= TREATMENT ADVISORY =================
         treatment = result.get("advisory", {}).get("treatment", {})
-        st.markdown(f"### 💊 {t('treatment')}")
-        st.write(f"**{t('chemical')}:** {treatment.get('chemical', 'N/A')}")
-        st.write(f"**{t('organic')}:** {treatment.get('organic', 'N/A')}")
-        st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
+        with st.expander(f"💊 {t('treatment')}"):
+            st.write(f"**{t('chemical')}:** {treatment.get('chemical', 'N/A')}")
+            st.write(f"**{t('organic')}:** {treatment.get('organic', 'N/A')}")
+            st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
 
-            # ---------- EXPERT CONNECT ----------
-    expert = result.get("expert_connect")
-    if expert and expert["enabled"]:
-        st.subheader("👨‍⚕️ Expert Help Recommended")
-        st.write(expert["reason"])
-        st.markdown(f"[💬 WhatsApp Expert]({expert['whatsapp']})")
-        st.write(f"📞 Helpline: {expert['helpline']}")
+        # ================= EXPERT CONNECT =================
+        expert = result.get("expert_connect")
+        if expert and expert.get("enabled"):
+            st.warning("⚠️ High severity detected. Expert consultation recommended.")
+            st.markdown(f"[💬 WhatsApp Expert]({expert['whatsapp']})")
+            st.write(f"📞 Helpline: {expert['helpline']}")
 
+        # ================= DOWNLOAD PDF =================
         pdf = generate_pdf(result, t)
         st.download_button(
             t("download"),
@@ -269,6 +299,10 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
             "CropGuard_AI_Report.pdf",
             "application/pdf"
         )
+
+        # ================= AI TRANSPARENCY =================
+        st.caption("⚙️ Powered by CNN + Explainable AI + Environmental Context")
+
 # ================= FEEDBACK =================
 st.markdown("---")
 st.markdown("### 📝 Farmer Feedback")
