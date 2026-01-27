@@ -1,0 +1,32 @@
+{
+  "status": "SUCCESS",
+  "crop_type": "Tomato",
+  "disease_detected": "Late Blight",
+  "severity": "Medium",
+  "risk_score": 0.5,
+  "confidence": "RULE_BASED",
+  "inference_mode": "ENVIRONMENT_RULE_BASED",
+  "decision_reason": "Rule-based crop and environment analysis",
+  "reasoning_clues": [
+    "No image uploaded",
+    "Environmental conditions analyzed"
+  ],
+  "advisory": {
+    "treatment": {
+      "chemical": "Mancozeb fungicide",
+      "organic": "Copper-based organic fungicide",
+      "prevention": "Avoid overhead irrigation and remove infected plants"
+    },
+    "pesticide_strategy": "Organic treatment with limited chemical use",
+    "yield_impact": "Early intervention improves yield"
+  },
+  "confidence_type": "RULE_BASED",
+  "expert_connect": {
+    "enabled": true,
+    "reason": "Low AI confidence",
+    "whatsapp": "https://wa.me/919876543210",
+    "helpline": "+91-1800-123-456"
+  },
+  "voice_summary": "http://127.0.0.1:5000//static/voice/2a1fe7f85ce143349951e5d4eb182af5.mp3",
+  "report_id": "5d2c40e9e1b3472abd949589b8951e7a"
+}

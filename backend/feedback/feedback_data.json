@@ -118,5 +118,13 @@
     "confidence": "RULE_BASED",
     "correct": null,
     "comment": "Need suggestion"
+  },
+  {
+    "id": "ed0dd8d5ce444680b26b5018bb9201d4",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Prediction is correct"
   }
 ]

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 import os
 import traceback
 import json
@@ -20,6 +20,7 @@ EXPERTS = {
 
 UPLOAD_DIR = "uploads"
 FEEDBACK_DIR = "feedback"
+REPORT_DIR = "reports"
 FEEDBACK_FILE = os.path.join(FEEDBACK_DIR, "feedback_data.json")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -119,6 +120,15 @@ def analyze():
                 explain_image
             ).replace("\\", "/")
 
+        # ================== REPORT SAVE ===================
+        report_id = uuid.uuid4().hex
+        result["report_id"] = report_id   
+
+        with open(f"{REPORT_DIR}/{report_id}.json", "w") as f:
+            json.dump(result, f, indent=2)
+
+        result["report_url"] = request.host_url + f"report/{report_id}" 
+
         return jsonify(result)
 
     except Exception as e:
@@ -127,6 +137,48 @@ def analyze():
             "status": "FAILED",
             "error": str(e)
         }), 500
+    
+# =========================================================
+# ================= FULL WEB REPORT =======================
+# =========================================================
+@app.route("/report/<report_id>")
+def view_report(report_id):
+    path = f"{REPORT_DIR}/{report_id}.json"
+
+    if not os.path.exists(path):
+        return "Report not found", 404
+
+    with open(path) as f:
+        d = json.load(f)
+
+    return render_template_string("""
+    <html>
+    <head>
+        <title>CropGuard AI Report</title>
+        <style>
+            body { font-family: Arial; padding: 20px; background:#f7f7f7 }
+            .card { background:white; padding:20px; border-radius:10px }
+            h1 { color:#2e7d32 }
+        </style>
+    </head>
+    <body>
+        <h1>🌱 CropGuard AI – Full Report</h1>
+        <div class="card">
+            <p><b>Crop:</b> {{d.crop_type}}</p>
+            <p><b>Disease:</b> {{d.disease_detected}}</p>
+            <p><b>Severity:</b> {{d.severity}}</p>
+            <p><b>Confidence:</b> {{d.confidence}}</p>
+
+            <h3>💊 Treatment</h3>
+            <ul>
+                <li><b>Chemical:</b> {{d.advisory.treatment.chemical}}</li>
+                <li><b>Organic:</b> {{d.advisory.treatment.organic}}</li>
+                <li><b>Prevention:</b> {{d.advisory.treatment.prevention}}</li>
+            </ul>
+        </div>
+    </body>
+    </html>
+    """, d=d)
 
 
 # =========================================================

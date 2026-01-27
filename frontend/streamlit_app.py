@@ -1,3 +1,4 @@
+from unittest import result
 import streamlit as st
 import requests
 from reportlab.lib.pagesizes import A4
@@ -154,12 +155,8 @@ def generate_pdf(result, t):
     pdfmetrics.registerFont(TTFont("Deva", font_path))
 
     # -------- QR CODE DATA --------
-    qr_text = f"""
-Crop: {result.get('crop_type')}
-Disease: {result.get('disease_detected')}
-Severity: {result.get('severity')}
-Confidence: {result.get('confidence')}
-"""
+    qr_text = result.get("report_url")
+
 
     qr = qrcode.make(qr_text)
     qr_path = os.path.join(BASE_DIR, "temp_qr.png")
@@ -248,6 +245,19 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
 
         st.metric(t("disease"), result.get("disease_detected"))
         st.metric(t("severity"), result.get("severity"))
+        
+        # ================= SEVERITY COLOR CODING =================
+        severity = str(result.get("severity", "")).lower()
+
+        if "low" in severity:
+            st.success("🟢 Low Risk – Crop condition is stable")
+        elif "medium" in severity or "moderate" in severity:
+            st.warning("🟡 Moderate Risk – Monitor crop closely")
+        elif "high" in severity or "severe" in severity:
+            st.error("🔴 High Risk – Immediate action required")
+        else:
+            st.info("ℹ️ Severity level unavailable")
+
         st.metric(t("confidence"), result.get("confidence"))
 
         # >>> ADDED: CONFIDENCE VISUALIZATION
