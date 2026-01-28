@@ -155,7 +155,13 @@ def generate_pdf(result, t):
     pdfmetrics.registerFont(TTFont("Deva", font_path))
 
     # -------- QR CODE DATA --------
-    qr_text = result.get("report_url")
+    qr_text = f"""
+Crop: {result.get('crop_type')}
+Disease: {result.get('disease_detected')}
+Severity: {result.get('severity')}
+Confidence: {result.get('confidence')}%
+"""
+
 
 
     qr = qrcode.make(qr_text)

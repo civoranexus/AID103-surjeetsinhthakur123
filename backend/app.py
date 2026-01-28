@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 import os
 import traceback
 import json
 import uuid
+import sqlite3
 
 from voice_summary import generate_voice_summary
 from cnn_model import extract_image_features, generate_explainability
@@ -20,11 +21,35 @@ EXPERTS = {
 
 UPLOAD_DIR = "uploads"
 FEEDBACK_DIR = "feedback"
-REPORT_DIR = "reports"
 FEEDBACK_FILE = os.path.join(FEEDBACK_DIR, "feedback_data.json")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(FEEDBACK_DIR, exist_ok=True)
+
+# =========================================================
+# ===================== SQLITE SETUP ======================
+# =========================================================
+DB_PATH = "cropguard.db"
+conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+cursor = conn.cursor()
+
+# ---------- CREATE TABLE (RUNS ONCE) ----------
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS crop_reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    report_id TEXT UNIQUE,
+    crop TEXT,
+    disease TEXT,
+    severity TEXT,
+    confidence REAL,
+    advisory TEXT,
+    expert_enabled INTEGER,
+    voice_summary TEXT,
+    explainability_image TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+conn.commit()
 
 # ---------- INIT FEEDBACK STORAGE ----------
 if not os.path.exists(FEEDBACK_FILE):
@@ -37,48 +62,34 @@ if not os.path.exists(FEEDBACK_FILE):
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
-        # ---------- COMMON INPUTS ----------
         humidity = float(request.form.get("humidity", 0))
         temperature = float(request.form.get("temperature", 0))
-        language = request.form.get("language", "en")  # en / hi / mr
+        language = request.form.get("language", "en")
 
         explain_image = None
 
-        # =================================================
-        # ================ IMAGE ANALYSIS =================
-        # =================================================
+        # ================= IMAGE =================
         if "image" in request.files and request.files["image"].filename:
             image = request.files["image"]
-
             image_path = os.path.join(
-                UPLOAD_DIR,
-                f"{uuid.uuid4().hex}_{image.filename}"
+                UPLOAD_DIR, f"{uuid.uuid4().hex}_{image.filename}"
             )
             image.save(image_path)
 
-            # ---- CNN Prediction ----
             image_features = extract_image_features(image_path)
 
-            # ---- Explainable AI (Grad-CAM) ----
             try:
                 explain_image = generate_explainability(image_path)
-            except Exception:
+            except:
                 explain_image = None
 
-            # ---- AI Engine (image-based) ----
             result = analyze_with_image(image_features)
 
-        # =================================================
-        # ============= NON-IMAGE ANALYSIS ================
-        # =================================================
+        # ================= NO IMAGE =================
         else:
             crop = request.form.get("crop")
-
             if not crop:
-                return jsonify({
-                    "status": "FAILED",
-                    "error": "Crop must be provided when no image is uploaded"
-                }), 400
+                return jsonify({"error": "Crop required"}), 400
 
             result = analyze_without_image(
                 crop_type=crop,
@@ -87,98 +98,67 @@ def analyze():
                     "temperature": temperature
                 }
             )
-        
-        # ================= LOW CONFIDENCE =================
+
+        # =================================================
+        # ============ CONFIDENCE NORMALIZATION ============
+        # =================================================
         raw_confidence = result.get("confidence", 0)
 
         if isinstance(raw_confidence, (int, float)):
-            confidence = float(raw_confidence)
+            confidence_value = float(raw_confidence)
         else:
-            # For RULE_BASED or other string types
-            confidence = 50.0   # default assumed confidence
-            result["confidence_type"] = raw_confidence
+            confidence_value = 50.0
+            result["confidence_type"] = str(raw_confidence)
+
+        result["confidence"] = confidence_value
 
         # ================= EXPERT CONNECT =================
         result["expert_connect"] = {
-            "enabled": confidence < 60,
+            "enabled": confidence_value < 60,
             "reason": "Low AI confidence",
             "whatsapp": f"https://wa.me/{EXPERTS['whatsapp']}",
             "helpline": EXPERTS["helpline"]
         }
 
-        # =================================================
-        # ================ VOICE SUMMARY ==================
-        # =================================================
+        # ================= VOICE =================
         voice_path = generate_voice_summary(result, language)
         result["voice_summary"] = request.host_url + voice_path
 
-        # =================================================
-        # ============== EXPLAINABILITY IMG ===============
-        # =================================================
+        # ================= EXPLAIN IMAGE =================
         if explain_image:
             result["explainability_image"] = os.path.abspath(
                 explain_image
             ).replace("\\", "/")
 
-        # ================== REPORT SAVE ===================
+        # =================================================
+        # ============== SAVE REPORT TO SQLITE =============
+        # =================================================
         report_id = uuid.uuid4().hex
-        result["report_id"] = report_id   
+        result["report_id"] = report_id
 
-        with open(f"{REPORT_DIR}/{report_id}.json", "w") as f:
-            json.dump(result, f, indent=2)
-
-        result["report_url"] = request.host_url + f"report/{report_id}" 
+        cursor.execute("""
+        INSERT INTO crop_reports
+        (report_id, crop, disease, severity, confidence, advisory,
+         expert_enabled, voice_summary, explainability_image)
+        VALUES (?,?,?,?,?,?,?,?,?)
+        """, (
+            report_id,
+            result.get("crop_type"),
+            result.get("disease_detected"),
+            result.get("severity"),
+            confidence_value,
+            json.dumps(result.get("advisory", {})),
+            int(result.get("expert_connect", {}).get("enabled", False)),
+            result.get("voice_summary"),
+            result.get("explainability_image")
+        ))
+        conn.commit()
 
         return jsonify(result)
 
     except Exception as e:
         traceback.print_exc()
-        return jsonify({
-            "status": "FAILED",
-            "error": str(e)
-        }), 500
-    
-# =========================================================
-# ================= FULL WEB REPORT =======================
-# =========================================================
-@app.route("/report/<report_id>")
-def view_report(report_id):
-    path = f"{REPORT_DIR}/{report_id}.json"
-
-    if not os.path.exists(path):
-        return "Report not found", 404
-
-    with open(path) as f:
-        d = json.load(f)
-
-    return render_template_string("""
-    <html>
-    <head>
-        <title>CropGuard AI Report</title>
-        <style>
-            body { font-family: Arial; padding: 20px; background:#f7f7f7 }
-            .card { background:white; padding:20px; border-radius:10px }
-            h1 { color:#2e7d32 }
-        </style>
-    </head>
-    <body>
-        <h1>🌱 CropGuard AI – Full Report</h1>
-        <div class="card">
-            <p><b>Crop:</b> {{d.crop_type}}</p>
-            <p><b>Disease:</b> {{d.disease_detected}}</p>
-            <p><b>Severity:</b> {{d.severity}}</p>
-            <p><b>Confidence:</b> {{d.confidence}}</p>
-
-            <h3>💊 Treatment</h3>
-            <ul>
-                <li><b>Chemical:</b> {{d.advisory.treatment.chemical}}</li>
-                <li><b>Organic:</b> {{d.advisory.treatment.organic}}</li>
-                <li><b>Prevention:</b> {{d.advisory.treatment.prevention}}</li>
-            </ul>
-        </div>
-    </body>
-    </html>
-    """, d=d)
+        return jsonify({"error": str(e)}), 500
 
 
 # =========================================================
@@ -186,49 +166,24 @@ def view_report(report_id):
 # =========================================================
 @app.route("/feedback", methods=["POST"])
 def feedback():
-    """
-    Stores farmer feedback for:
-    - Model evaluation
-    - Dataset improvement
-    - Future retraining
-    """
     try:
         data = request.json
-
         if not data:
-            return jsonify({
-                "status": "FAILED",
-                "error": "No feedback data received"
-            }), 400
+            return jsonify({"error": "No feedback data"}), 400
 
-        feedback_entry = {
-            "id": uuid.uuid4().hex,
-            "crop": data.get("crop"),
-            "disease": data.get("disease"),
-            "confidence": data.get("confidence"),
-            "correct": data.get("correct"),  # True / False
-            "comment": data.get("comment", ""),
-        }
-
-        # ---------- SAVE FEEDBACK ----------
         with open(FEEDBACK_FILE, "r+") as f:
             existing = json.load(f)
-            existing.append(feedback_entry)
+            existing.append(data)
             f.seek(0)
             json.dump(existing, f, indent=2)
 
-        return jsonify({
-            "status": "SUCCESS",
-            "message": "Feedback saved successfully"
-        })
+        return jsonify({"status": "SUCCESS"})
 
     except Exception as e:
         traceback.print_exc()
-        return jsonify({
-            "status": "FAILED",
-            "error": str(e)
-        }), 500
-    
+        return jsonify({"error": str(e)}), 500
+
+
 # =========================================================
 # ===================== RUN SERVER ========================
 # =========================================================
