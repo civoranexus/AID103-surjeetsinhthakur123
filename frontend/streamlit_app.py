@@ -103,6 +103,10 @@ LANG = {
 # ================= PAGE CONFIG =================
 st.set_page_config(page_title="CropGuard AI", layout="wide", page_icon="🌱")
 
+# ================= LOAD CSS =================
+with open("styles.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # ================= LANGUAGE SELECT =================
 language = st.sidebar.selectbox("🌍 Language / भाषा", ["English", "Hindi", "Marathi"])
 T = LANG[language]
