@@ -126,5 +126,53 @@
     "confidence": "RULE_BASED",
     "correct": true,
     "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "outcome": "Recovered",
+    "yield_change": "Improved",
+    "days_after_treatment": 1,
+    "comment": ""
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "outcome": "Recovered",
+    "yield_change": "Improved",
+    "days_after_treatment": 1,
+    "comment": ""
+  },
+  {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
   }
 ]

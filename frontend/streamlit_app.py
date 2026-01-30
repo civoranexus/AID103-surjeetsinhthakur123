@@ -107,19 +107,33 @@ st.set_page_config(page_title="CropGuard AI", layout="wide", page_icon="🌱")
 with open("styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+st.markdown(
+    '<div class="footer">Powered by <b>Civora Nexus</b></div>',
+    unsafe_allow_html=True
+)
+
 # ================= LANGUAGE SELECT =================
 language = st.sidebar.selectbox("🌍 Language / भाषा", ["English", "Hindi", "Marathi"])
 T = LANG[language]
 t = lambda k: T[k]
 
 # ================= HEADER =================
-st.markdown(
-    f"""
-    <h1 style="text-align:center;">🌱 {t('title')}</h1>
-    <h4 style="text-align:center;color:gray;">{t('subtitle')}</h4>
-    """,
-    unsafe_allow_html=True
-)
+left_col, right_col = st.columns([4, 1])
+
+with left_col:
+    st.markdown(
+        f"""
+        <h1 style="margin-bottom:0;">🌱 {t('title')}</h1>
+        <h4 style="color:gray;margin-top:6px;">
+            {t('subtitle')}
+        </h4>
+        """,
+        unsafe_allow_html=True
+    )
+
+with right_col:
+    st.image("assets/logo.png", width=110)
+
 st.markdown("---")
 
 # ================= SIDEBAR =================
