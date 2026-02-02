@@ -9,10 +9,17 @@ from voice_summary import generate_voice_summary
 from cnn_model import extract_image_features, generate_explainability
 from ai_engine import analyze_with_image, analyze_without_image
 
+import requests
+from dotenv import load_dotenv
+
 # =========================================================
 # ===================== APP SETUP =========================
 # =========================================================
 app = Flask(__name__)
+
+
+load_dotenv()
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 EXPERTS = {
     "whatsapp": "919876543210",
@@ -57,11 +64,42 @@ if not os.path.exists(FEEDBACK_FILE):
         json.dump([], f)
 
 # =========================================================
+# ===================== WEATHER API =======================
+def get_weather(city):
+    if not city or not WEATHER_API_KEY:
+        return None
+
+    try:
+        url = (
+            "https://api.openweathermap.org/data/2.5/weather"
+            f"?q={city}&appid={WEATHER_API_KEY}&units=metric"
+        )
+
+        response = requests.get(url, timeout=10)
+        data = response.json()
+
+        if response.status_code != 200:
+            return None
+
+        return {
+            "temperature": data["main"]["temp"],
+            "humidity": data["main"]["humidity"],
+            "weather": data["weather"][0]["description"],
+            "wind_speed": data["wind"]["speed"]
+        }
+
+    except Exception:
+        return None
+
+# =========================================================
 # ===================== ANALYZE API =======================
 # =========================================================
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
+
+        city = request.form.get("city")
+        weather = get_weather(city)
         humidity = float(request.form.get("humidity", 0))
         temperature = float(request.form.get("temperature", 0))
         language = request.form.get("language", "en")
@@ -119,6 +157,8 @@ def analyze():
             "whatsapp": f"https://wa.me/{EXPERTS['whatsapp']}",
             "helpline": EXPERTS["helpline"]
         }
+
+        result["weather_data"] = weather
 
         # ================= VOICE =================
         voice_path = generate_voice_summary(result, language)

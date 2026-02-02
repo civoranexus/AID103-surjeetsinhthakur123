@@ -145,6 +145,26 @@ CROP_OPTIONS = [
 ]
 
 crop = st.sidebar.selectbox(t("select_crop"), CROP_OPTIONS)
+st.sidebar.markdown("### 🌦 Live Weather")
+
+city = st.sidebar.text_input("City", "Pune")
+
+try:
+    weather_res = requests.get(
+        "http://127.0.0.1:5000/weather",
+        params={"city": city},
+        timeout=10
+    ).json()
+
+    st.sidebar.metric("🌡 Temperature (°C)", weather_res["temperature"])
+    st.sidebar.metric("💧 Humidity (%)", weather_res["humidity"])
+    st.sidebar.caption(f"Condition: {weather_res['condition']}")
+
+except:
+    st.sidebar.warning("Weather data unavailable")
+    
+
+
 humidity = st.sidebar.slider(t("humidity"), 30, 100, 70)
 temperature = st.sidebar.slider(t("temperature"), 15, 45, 30)
 
@@ -237,7 +257,8 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
                     "crop": crop,
                     "humidity": humidity,
                     "temperature": temperature,
-                    "language": T["lang_code"]
+                    "language": T["lang_code"],
+                    "city": city
                 },
                 files={"image": image_file} if image_file else None,
                 timeout=60
@@ -257,6 +278,15 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         st.toast("Analysis completed ✅")  
 
         st.markdown(f"## 🧠 {t('result')}")
+
+        # >>> ADDED: DISPLAY WEATHER DATA
+        weather = result.get("weather_data")
+        if weather:
+            st.info(
+                f"🌦 **Weather Used:** {weather['weather'].title()} | "
+                f"{weather['temperature']}°C | {weather['humidity']}% humidity"
+            )
+
 
         detected_crop = result.get("crop_type")
 
