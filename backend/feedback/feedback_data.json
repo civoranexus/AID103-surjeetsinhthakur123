@@ -405,5 +405,40 @@
     "confidence": 50.0,
     "correct": true,
     "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
   }
 ]

@@ -173,6 +173,10 @@ uploaded_image = st.sidebar.file_uploader(t("upload_image"), type=["jpg", "jpeg"
 camera_image = st.sidebar.camera_input(t("camera"))
 image_file = uploaded_image if uploaded_image else camera_image
 
+is_camera = camera_image is not None
+is_upload = uploaded_image is not None
+image_file = uploaded_image if uploaded_image else camera_image
+
 # ================= MAIN =================
 left, right = st.columns([1.1, 1.4])
 
@@ -253,13 +257,13 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         try:
             response = requests.post(
                 "http://127.0.0.1:5000/analyze",
-                data={
-                    "crop": crop,
-                    "humidity": humidity,
-                    "temperature": temperature,
-                    "language": T["lang_code"],
-                    "city": city
-                },
+            data={
+                "crop": crop,
+                "humidity": humidity,
+                "temperature": temperature,
+                "language": T["lang_code"],
+                **({"city": city} if is_camera or image_file is None else {})
+            },
                 files={"image": image_file} if image_file else None,
                 timeout=60
             )
@@ -282,9 +286,15 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         # >>> ADDED: DISPLAY WEATHER DATA
         weather = result.get("weather_data")
         if weather:
-            st.info(
-                f"🌦 **Weather Used:** {weather['weather'].title()} | "
-                f"{weather['temperature']}°C | {weather['humidity']}% humidity"
+            st.markdown(
+                f"""
+                <div style="background:#e3f2fd;padding:12px;border-radius:10px;">
+                🌦 <b>Weather Used:</b> {weather['weather'].title()} |
+                🌡 {weather['temperature']}°C |
+                💧 {weather['humidity']}%
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
 
@@ -322,6 +332,31 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         except:
             st.info("Confidence calculated using rule-based logic")
 
+        # ================= SEVERITY GRADIENT CARD =================
+        severity = str(result.get("severity", "")).lower()
+        if "low" in severity:
+            color = "#e8f5e9"; text = "🟢 LOW RISK"
+        elif "medium" in severity:
+            color = "#fff8e1"; text = "🟡 MODERATE RISK"
+        else:
+            color = "#ffebee"; text = "🔴 HIGH RISK"
+
+        st.markdown(
+            f"""
+            <div style="background:{color};padding:16px;
+            border-radius:12px;font-size:18px;font-weight:bold;">
+            {text}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # ================= RISK GAUGE =================
+        risk_score = int(float(result.get("confidence", 0)))
+        st.markdown("### 📊 Risk Gauge")
+        st.progress(risk_score)
+        st.caption(f"Overall Risk Score: {risk_score}%")
+
         # ================= 🔊 VOICE SUMMARY =================
         voice_file = result.get("voice_summary")
         if voice_file:
@@ -348,12 +383,16 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
             st.write(f"**{t('organic')}:** {treatment.get('organic', 'N/A')}")
             st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
 
-        # ================= EXPERT CONNECT =================
-        expert = result.get("expert_connect")
-        if expert and expert.get("enabled"):
-            st.warning("⚠️ High severity detected. Expert consultation recommended.")
-            st.markdown(f"[💬 WhatsApp Expert]({expert['whatsapp']})")
-            st.write(f"📞 Helpline: {expert['helpline']}")
+        # ================= 📥 WHATSAPP SHARE =================
+        share_text = f"""
+CropGuard AI Report
+Crop: {result.get('crop_type')}
+Disease: {result.get('disease_detected')}
+Severity: {result.get('severity')}
+Confidence: {result.get('confidence')}%
+"""
+        whatsapp_url = f"https://wa.me/?text={requests.utils.quote(share_text)}"
+        st.markdown(f"[📥 Share Report on WhatsApp]({whatsapp_url})")
 
         # ================= DOWNLOAD PDF =================
         pdf = generate_pdf(result, t)
