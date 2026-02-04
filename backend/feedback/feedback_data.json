@@ -440,5 +440,103 @@
     "confidence": 50.0,
     "correct": true,
     "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Mosaic Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Target Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Mosaic Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Raspberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
   }
 ]

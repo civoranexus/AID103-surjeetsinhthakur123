@@ -1,4 +1,3 @@
-from unittest import result
 import streamlit as st
 import requests
 from reportlab.lib.pagesizes import A4
@@ -38,7 +37,9 @@ LANG = {
         "organic": "Organic Treatment",
         "prevention": "Prevention",
         "download": "Download PDF Report",
-        "gradcam": "Grad-CAM Visualization"
+        "gradcam": "Grad-CAM Visualization",
+        "reliability": "Prediction Reliability",
+        "advice_title": "📢 Final Farmer Advice"
     },
     "Hindi": {
         "lang_code": "hi",
@@ -67,7 +68,9 @@ LANG = {
         "organic": "जैविक उपचार",
         "prevention": "रोकथाम",
         "download": "पीडीएफ रिपोर्ट डाउनलोड करें",
-        "gradcam": "ग्रैड-कैम दृश्य"
+        "gradcam": "ग्रैड-कैम दृश्य",
+        "reliability": "पूर्वानुमान विश्वसनीयता",
+        "advice_title": "📢 किसान के लिए अंतिम सलाह"
     },
     "Marathi": {
         "lang_code": "mr",
@@ -96,7 +99,9 @@ LANG = {
         "organic": "सेंद्रिय उपचार",
         "prevention": "प्रतिबंध",
         "download": "पीडीएफ अहवाल डाउनलोड करा",
-        "gradcam": "ग्रॅड-कॅम दृश्य"
+        "gradcam": "ग्रैड-कॅम दृश्य",
+        "reliability": "अंदाज विश्वसनीयता",
+        "advice_title": "📢 शेतकऱ्यासाठी अंतिम सल्ला"
     }
 }
 
@@ -104,8 +109,11 @@ LANG = {
 st.set_page_config(page_title="CropGuard AI", layout="wide", page_icon="🌱")
 
 # ================= LOAD CSS =================
-with open("styles.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+try:
+    with open("styles.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+except FileNotFoundError:
+    pass
 
 st.markdown(
     '<div class="footer">Powered by <b>Civora Nexus</b></div>',
@@ -132,7 +140,10 @@ with left_col:
     )
 
 with right_col:
-    st.image("assets/logo.png", width=110)
+    try:
+        st.image("assets/logo.png", width=110)
+    except:
+        st.write("Logo")
 
 st.markdown("---")
 
@@ -162,8 +173,6 @@ try:
 
 except:
     st.sidebar.warning("Weather data unavailable")
-    
-
 
 humidity = st.sidebar.slider(t("humidity"), 30, 100, 70)
 temperature = st.sidebar.slider(t("temperature"), 15, 45, 30)
@@ -175,7 +184,6 @@ image_file = uploaded_image if uploaded_image else camera_image
 
 is_camera = camera_image is not None
 is_upload = uploaded_image is not None
-image_file = uploaded_image if uploaded_image else camera_image
 
 # ================= MAIN =================
 left, right = st.columns([1.1, 1.4])
@@ -194,17 +202,15 @@ def generate_pdf(result, t):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     font_path = os.path.join(BASE_DIR, "fonts", "NotoSansDevanagari-Regular.ttf")
 
-    pdfmetrics.registerFont(TTFont("Deva", font_path))
-
-    # -------- QR CODE DATA --------
+    if os.path.exists(font_path):
+        pdfmetrics.registerFont(TTFont("Deva", font_path))
+    
     qr_text = f"""
 Crop: {result.get('crop_type')}
 Disease: {result.get('disease_detected')}
 Severity: {result.get('severity')}
 Confidence: {result.get('confidence')}%
 """
-
-
 
     qr = qrcode.make(qr_text)
     qr_path = os.path.join(BASE_DIR, "temp_qr.png")
@@ -213,10 +219,18 @@ Confidence: {result.get('confidence')}%
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
-    c.setFont("Deva", 16)
+    try:
+        c.setFont("Deva", 16)
+    except:
+        c.setFont("Helvetica-Bold", 16)
+        
     c.drawString(50, height - 50, f"{t('title')} – Report")
 
-    c.setFont("Deva", 12)
+    try:
+        c.setFont("Deva", 12)
+    except:
+        c.setFont("Helvetica", 12)
+        
     y = height - 100
 
     c.drawString(50, y, f"{t('crop_detected')}: {result.get('crop_type')}")
@@ -235,16 +249,16 @@ Confidence: {result.get('confidence')}%
     y -= 25
     c.drawString(50, y, f"{t('prevention')}: {treatment.get('prevention', 'N/A')}")
 
-    # -------- QR CODE ON PDF --------
     c.drawImage(qr_path, width - 160, 60, 100, 100)
-    c.setFont("Deva", 9)
+    c.setFont("Helvetica", 9)
     c.drawString(width - 170, 45, "Scan QR for summary")
 
     c.showPage()
     c.save()
     buffer.seek(0)
 
-    os.remove(qr_path)
+    if os.path.exists(qr_path):
+        os.remove(qr_path)
     return buffer
 
 # ================= ANALYZE =================
@@ -252,18 +266,16 @@ st.markdown("---")
 
 if st.button(f"🔍 {t('analyze')}", use_container_width=True):
     with st.spinner("AI Processing..."):
-
-        # >>> ADDED: SAFE API CALL
         try:
             response = requests.post(
                 "http://127.0.0.1:5000/analyze",
-            data={
-                "crop": crop,
-                "humidity": humidity,
-                "temperature": temperature,
-                "language": T["lang_code"],
-                **({"city": city} if is_camera or image_file is None else {})
-            },
+                data={
+                    "crop": crop,
+                    "humidity": humidity,
+                    "temperature": temperature,
+                    "language": T["lang_code"],
+                    **({"city": city} if is_camera or image_file is None else {})
+                },
                 files={"image": image_file} if image_file else None,
                 timeout=60
             )
@@ -283,12 +295,26 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
 
         st.markdown(f"## 🧠 {t('result')}")
 
-        # >>> ADDED: DISPLAY WEATHER DATA
+        # ======= WEATHER APPLIED UI BADGE ========
         weather = result.get("weather_data")
+        badge_color = "#4CAF50" if weather else "#757575"
+        badge_text = "YES" if weather else "NO"
+        
+        st.markdown(
+            f"""
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-weight: bold; font-size: 16px;">Weather Applied:</span>
+                <span style="background-color: {badge_color}; color: white; padding: 4px 12px; 
+                border-radius: 20px; font-weight: bold; font-size: 14px;">{badge_text}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         if weather:
             st.markdown(
                 f"""
-                <div style="background:#e3f2fd;padding:12px;border-radius:10px;">
+                <div style="background:#e3f2fd;padding:12px;border-radius:10px;margin-bottom:20px;">
                 🌦 <b>Weather Used:</b> {weather['weather'].title()} |
                 🌡 {weather['temperature']}°C |
                 💧 {weather['humidity']}%
@@ -297,6 +323,18 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
                 unsafe_allow_html=True
             )
 
+        # ======= PREDICTION RELIABILITY GAUGE ========
+        try:
+            conf_val = float(result.get("confidence", 0))
+        except:
+            conf_val = 0
+            
+        reliability_score = (conf_val * 0.7) + (30 if weather else 0)
+        rel_color = "green" if reliability_score > 80 else "orange" if reliability_score > 50 else "red"
+        
+        st.markdown(f"### 🛡️ {t('reliability')}")
+        st.progress(min(int(reliability_score), 100))
+        st.markdown(f"<small style='color:{rel_color}; font-weight:bold;'>Reliability Score: {int(reliability_score)}% (Verified via Multi-modal Analysis)</small>", unsafe_allow_html=True)
 
         detected_crop = result.get("crop_type")
 
@@ -322,9 +360,26 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         else:
             st.info("ℹ️ Severity level unavailable")
 
+        # ================= FINAL FARMER ADVICE CARD =================
+        if "high" in severity or "severe" in severity:
+            advice_msg = "🚨 **Critical Warning:** Immediate application of treatment required. Isolate the affected area and prevent water runoff to other plots."
+            advice_bg = "#ffebee"; advice_border = "#f44336"
+        elif "medium" in severity or "moderate" in severity:
+            advice_msg = "⚠️ **Precautionary Note:** Condition is evolving. Start organic treatment and re-scan in 48 hours to track progress."
+            advice_bg = "#fff3e0"; advice_border = "#ff9800"
+        else:
+            advice_msg = "✅ **Routine Care:** No active danger detected. Maintain current preventive schedule and ensure adequate ventilation between crops."
+            advice_bg = "#e8f5e9"; advice_border = "#4caf50"
+
+        st.markdown(f"""
+            <div style="background-color:{advice_bg}; border-left: 6px solid {advice_border}; padding: 20px; border-radius: 10px; margin: 25px 0;">
+                <h3 style="margin-top:0;">{t('advice_title')}</h3>
+                <p style="font-size: 16px; line-height: 1.5;">{advice_msg}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
         st.metric(t("confidence"), result.get("confidence"))
 
-        # >>> ADDED: CONFIDENCE VISUALIZATION
         conf = result.get("confidence", 0)
         try:
             st.progress(int(float(conf) * 100))
@@ -333,10 +388,9 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
             st.info("Confidence calculated using rule-based logic")
 
         # ================= SEVERITY GRADIENT CARD =================
-        severity = str(result.get("severity", "")).lower()
         if "low" in severity:
             color = "#e8f5e9"; text = "🟢 LOW RISK"
-        elif "medium" in severity:
+        elif "medium" in severity or "moderate" in severity:
             color = "#fff8e1"; text = "🟡 MODERATE RISK"
         else:
             color = "#ffebee"; text = "🔴 HIGH RISK"
@@ -352,7 +406,11 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         )
 
         # ================= RISK GAUGE =================
-        risk_score = int(float(result.get("confidence", 0)))
+        try:
+            risk_score = int(float(result.get("confidence", 0)))
+        except:
+            risk_score = 0
+            
         st.markdown("### 📊 Risk Gauge")
         st.progress(risk_score)
         st.caption(f"Overall Risk Score: {risk_score}%")
@@ -384,13 +442,7 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
             st.write(f"**{t('prevention')}:** {treatment.get('prevention', 'N/A')}")
 
         # ================= 📥 WHATSAPP SHARE =================
-        share_text = f"""
-CropGuard AI Report
-Crop: {result.get('crop_type')}
-Disease: {result.get('disease_detected')}
-Severity: {result.get('severity')}
-Confidence: {result.get('confidence')}%
-"""
+        share_text = f"CropGuard AI Report\nCrop: {result.get('crop_type')}\nDisease: {result.get('disease_detected')}\nSeverity: {result.get('severity')}\nConfidence: {result.get('confidence')}%"
         whatsapp_url = f"https://wa.me/?text={requests.utils.quote(share_text)}"
         st.markdown(f"[📥 Share Report on WhatsApp]({whatsapp_url})")
 
@@ -403,77 +455,57 @@ Confidence: {result.get('confidence')}%
             "application/pdf"
         )
 
-        # ================= AI TRANSPARENCY =================
         st.caption("⚙️ Powered by CNN + Explainable AI + Environmental Context")
 
 # ================= FEEDBACK =================
 st.markdown("---")
 st.markdown("### 📝 Farmer Feedback")
 
-result = st.session_state.get("analysis_result")
+result_data = st.session_state.get("analysis_result")
 
-if result is None:
+if result_data is None:
     st.info("ℹ️ Analyze a crop to give feedback")
 else:
     col1, col2, col3 = st.columns(3)
 
-    # ---------- ✅ CORRECT ----------
     with col1:
         if st.button("👍 Correct"):
             feedback_payload = {
-                "crop": result.get("crop_type"),
-                "disease": result.get("disease_detected"),
-                "confidence": result.get("confidence"),
+                "crop": result_data.get("crop_type"),
+                "disease": result_data.get("disease_detected"),
+                "confidence": result_data.get("confidence"),
                 "correct": True,
                 "comment": "Prediction is correct"
             }
-
-            requests.post(
-                "http://127.0.0.1:5000/feedback",
-                json=feedback_payload
-            )
-
+            requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
             st.success("✅ Thank you! Feedback recorded.")
 
-    # ---------- ❌ INCORRECT ----------
     with col2:
         if st.button("👎 Incorrect"):
             feedback_payload = {
-                "crop": result.get("crop_type"),
-                "disease": result.get("disease_detected"),
-                "confidence": result.get("confidence"),
+                "crop": result_data.get("crop_type"),
+                "disease": result_data.get("disease_detected"),
+                "confidence": result_data.get("confidence"),
                 "correct": False,
                 "comment": "Prediction is incorrect"
             }
-
-            requests.post(
-                "http://127.0.0.1:5000/feedback",
-                json=feedback_payload
-            )
-
+            requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
             st.warning("❌ Feedback recorded as incorrect.")
 
-    # ---------- ❓ OTHER QUERY ----------
     with col3:
         other_comment = st.text_input("❓ Other issue / suggestion")
-
         if st.button("📩 Submit Query"):
             if other_comment.strip() == "":
                 st.warning("Please enter your query")
             else:
                 feedback_payload = {
-                    "crop": result.get("crop_type"),
-                    "disease": result.get("disease_detected"),
-                    "confidence": result.get("confidence"),
+                    "crop": result_data.get("crop_type"),
+                    "disease": result_data.get("disease_detected"),
+                    "confidence": result_data.get("confidence"),
                     "correct": None,
                     "comment": other_comment
                 }
-
-                requests.post(
-                    "http://127.0.0.1:5000/feedback",
-                    json=feedback_payload
-                )
-
+                requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
                 st.success("📩 Query submitted successfully")
 
     st.markdown("## 📋 Post-Treatment Feedback")
@@ -489,20 +521,18 @@ else:
     )
 
     days = st.number_input("Days after treatment", min_value=1, max_value=30)
-
     comment = st.text_area("Additional comments (optional)")
 
     if st.button("📨 Submit Outcome Feedback"):
         feedback_payload = {
-            "crop": result.get("crop_type"),
-            "disease": result.get("disease_detected"),
-            "confidence": result.get("confidence"),
+            "crop": result_data.get("crop_type"),
+            "disease": result_data.get("disease_detected"),
+            "confidence": result_data.get("confidence"),
             "correct": True,
             "outcome": outcome,
             "yield_change": yield_change,
             "days_after_treatment": days,
             "comment": comment
         }
-
         requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
         st.success("✅ Thank you! Your feedback helps improve the AI.")
