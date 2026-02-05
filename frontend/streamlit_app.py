@@ -299,7 +299,16 @@ if st.button(f"🔍 {t('analyze')}", use_container_width=True):
         weather = result.get("weather_data")
         badge_color = "#4CAF50" if weather else "#757575"
         badge_text = "YES" if weather else "NO"
-        
+
+        # ================= OFFLINE / CLOUD MODE BADGE =================
+    if result.get("offline_mode"):
+        st.info("📴 Offline AI used (Edge TFLite Model)")
+        st.toast("📴 Running in Offline Edge AI mode")
+    else:
+        st.success("🌐 Cloud AI used")
+        st.toast("🌐 Cloud AI inference completed")
+
+            
         st.markdown(
             f"""
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
@@ -478,7 +487,7 @@ else:
                 "comment": "Prediction is correct"
             }
             requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
-            st.success("✅ Thank you! Feedback recorded.")
+            st.toast("✅ Feedback recorded. Thank you!")
 
     with col2:
         if st.button("👎 Incorrect"):
@@ -490,13 +499,13 @@ else:
                 "comment": "Prediction is incorrect"
             }
             requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
-            st.warning("❌ Feedback recorded as incorrect.")
+            st.toast("❌ Marked as incorrect. Thanks for helping us improve!")
 
     with col3:
         other_comment = st.text_input("❓ Other issue / suggestion")
         if st.button("📩 Submit Query"):
             if other_comment.strip() == "":
-                st.warning("Please enter your query")
+                st.toast("⚠️ Please enter your query")
             else:
                 feedback_payload = {
                     "crop": result_data.get("crop_type"),
@@ -506,7 +515,7 @@ else:
                     "comment": other_comment
                 }
                 requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
-                st.success("📩 Query submitted successfully")
+                st.toast("📩 Query submitted successfully")
 
     st.markdown("## 📋 Post-Treatment Feedback")
 
@@ -535,4 +544,4 @@ else:
             "comment": comment
         }
         requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
-        st.success("✅ Thank you! Your feedback helps improve the AI.")
+        st.toast("✅ Thank you! Your feedback helps improve the AI.")

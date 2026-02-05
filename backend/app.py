@@ -222,7 +222,52 @@ def feedback():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/sync-offline", methods=["POST"])
+def sync_offline():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data"}), 400
 
+        image_features = {
+            "disease": data.get("crop_disease_label"),
+            "confidence": data.get("confidence")
+        }
+
+        result = analyze_with_image(image_features)
+
+        city = data.get("city")
+        weather = get_weather(city)
+        result["weather_data"] = weather
+        result["offline_mode"] = True
+
+        report_id = uuid.uuid4().hex
+        result["report_id"] = report_id
+
+        cursor.execute("""
+        INSERT INTO crop_reports
+        (report_id, crop, disease, severity, confidence, advisory,
+         expert_enabled, voice_summary, explainability_image)
+        VALUES (?,?,?,?,?,?,?,?,?)
+        """, (
+            report_id,
+            result.get("crop_type"),
+            result.get("disease_detected"),
+            result.get("severity"),
+            float(result.get("confidence", 50)),
+            json.dumps(result.get("advisory", {})),
+            0,
+            None,
+            None
+        ))
+        conn.commit()
+
+        return jsonify(result)
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 # =========================================================
 # ===================== RUN SERVER ========================
