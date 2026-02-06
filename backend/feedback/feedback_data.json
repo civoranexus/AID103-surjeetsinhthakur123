@@ -681,5 +681,159 @@
     "confidence": 50.0,
     "correct": true,
     "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Leaf Mold",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Unknown",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
   }
 ]

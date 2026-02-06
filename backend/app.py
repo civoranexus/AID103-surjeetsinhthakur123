@@ -223,6 +223,9 @@ def feedback():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     
+# =========================================================
+# ================= OFFLINE SYNC API ======================
+# =========================================================
 @app.route("/sync-offline", methods=["POST"])
 def sync_offline():
     try:
@@ -232,15 +235,12 @@ def sync_offline():
 
         image_features = {
             "disease": data.get("crop_disease_label"),
-            "confidence": data.get("confidence")
+            "confidence": data.get("confidence", "50%")
         }
 
         result = analyze_with_image(image_features)
-
-        city = data.get("city")
-        weather = get_weather(city)
-        result["weather_data"] = weather
         result["offline_mode"] = True
+        result["weather_data"] = get_weather(data.get("city"))
 
         report_id = uuid.uuid4().hex
         result["report_id"] = report_id
@@ -248,8 +248,8 @@ def sync_offline():
         cursor.execute("""
         INSERT INTO crop_reports
         (report_id, crop, disease, severity, confidence, advisory,
-         expert_enabled, voice_summary, explainability_image)
-        VALUES (?,?,?,?,?,?,?,?,?)
+         expert_enabled, offline_mode)
+        VALUES (?,?,?,?,?,?,?,?)
         """, (
             report_id,
             result.get("crop_type"),
@@ -258,8 +258,7 @@ def sync_offline():
             float(result.get("confidence", 50)),
             json.dumps(result.get("advisory", {})),
             0,
-            None,
-            None
+            1
         ))
         conn.commit()
 
