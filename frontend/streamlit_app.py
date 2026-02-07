@@ -591,3 +591,33 @@ else:
         }
         requests.post("http://127.0.0.1:5000/feedback", json=feedback_payload)
         st.toast("✅ Thank you! Your feedback helps improve the AI.")
+
+st.markdown("### 🌐 Connect with Civora Nexus")
+
+ICON_BASE = "http://127.0.0.1:5000/icons"
+
+st.markdown(f"""
+<div style="display:flex; justify-content:center; gap:22px;">
+    <a href="https://www.instagram.com/civoranexus" target="_blank">
+        <img src="{ICON_BASE}/instagram.png" width="38">
+    </a>
+    <a href="https://x.com/civoranexus" target="_blank">
+        <img src="{ICON_BASE}/twitter.png" width="38">
+    </a>
+    <a href="https://www.youtube.com/@civoranexus" target="_blank">
+        <img src="{ICON_BASE}/youtube.png" width="38">
+    </a>
+    <a href="https://www.linkedin.com/company/civoranexus/" target="_blank">
+        <img src="{ICON_BASE}/linkedin.png" width="38">
+    </a>
+    <a href="https://github.com/civoranexus" target="_blank">
+        <img src="{ICON_BASE}/github.png" width="38">
+    </a>
+    <a href="https://www.civora.com" target="_blank">
+        <img src="{ICON_BASE}/facebook.png" width="38">
+    </a>
+    <a href="https://civoranexus.com/" target="_blank">
+        <img src="{ICON_BASE}/short_logo.png" width="26">
+    </a>    
+</div>
+""", unsafe_allow_html=True)

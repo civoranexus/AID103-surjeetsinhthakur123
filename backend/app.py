@@ -4,6 +4,7 @@ import traceback
 import json
 import uuid
 import sqlite3
+from flask import Flask, send_from_directory
 
 from voice_summary import generate_voice_summary
 from cnn_model import extract_image_features, generate_explainability
@@ -39,6 +40,11 @@ os.makedirs(FEEDBACK_DIR, exist_ok=True)
 DB_PATH = "cropguard.db"
 conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 cursor = conn.cursor()
+
+# ===================== STATIC FILES =======================
+@app.route("/icons/<filename>")
+def serve_icons(filename):
+    return send_from_directory("static/icons", filename)
 
 # ---------- CREATE TABLE (RUNS ONCE) ----------
 cursor.execute("""
