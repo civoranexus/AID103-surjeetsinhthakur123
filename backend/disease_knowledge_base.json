@@ -1,0 +1,314 @@
+{
+  "Tomato": {
+    "Early Blight": {
+      "treatment": {
+        "chemical": "Copper fungicide (minimal dose)",
+        "organic": "Neem oil spray",
+        "prevention": "Crop rotation and proper plant spacing"
+      }
+    },
+    "Late Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Copper-based organic fungicide",
+        "prevention": "Avoid overhead irrigation and remove infected plants"
+      }
+    },
+    "Leaf Curl Virus": {
+      "treatment": {
+        "chemical": "Imidacloprid only if severe",
+        "organic": "Yellow sticky traps",
+        "prevention": "Whitefly control and resistant varieties"
+      }
+    },
+    "Anthracnose": {
+      "treatment": {
+        "chemical": "Chlorothalonil fungicide",
+        "organic": "Neem oil + Trichoderma",
+        "prevention": "Avoid fruit-soil contact and improve drainage"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Maintain soil nutrition",
+        "prevention": "Regular monitoring and balanced irrigation"
+      }
+    }
+  },
+
+  "Potato": {
+    "Early Blight": {
+      "treatment": {
+        "chemical": "Chlorothalonil fungicide",
+        "organic": "Compost tea spray",
+        "prevention": "Avoid overhead irrigation"
+      }
+    },
+    "Late Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Copper-based fungicide",
+        "prevention": "Use certified seeds and remove infected plants"
+      }
+    },
+    "Black Scurf": {
+      "treatment": {
+        "chemical": "Thiabendazole seed treatment",
+        "organic": "Biological seed treatment",
+        "prevention": "Proper soil drainage and crop rotation"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Organic compost application",
+        "prevention": "Proper field sanitation"
+      }
+    }
+  },
+
+  "Wheat": {
+    "Rust Disease": {
+      "treatment": {
+        "chemical": "Propiconazole fungicide",
+        "organic": "Sulfur spray",
+        "prevention": "Use rust-resistant varieties"
+      }
+    },
+    "Powdery Mildew": {
+      "treatment": {
+        "chemical": "Triadimefon fungicide",
+        "organic": "Milk spray solution",
+        "prevention": "Maintain adequate plant spacing"
+      }
+    },
+    "Leaf Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Neem oil spray",
+        "prevention": "Balanced fertilization and crop rotation"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Maintain soil health",
+        "prevention": "Timely sowing and irrigation"
+      }
+    }
+  },
+
+  "Rice": {
+    "Rice Blast": {
+      "treatment": {
+        "chemical": "Tricyclazole fungicide",
+        "organic": "Neem-based bio-fungicide",
+        "prevention": "Avoid excessive nitrogen fertilization"
+      }
+    },
+    "Brown Spot": {
+      "treatment": {
+        "chemical": "Carbendazim fungicide",
+        "organic": "Organic compost enrichment",
+        "prevention": "Improve soil fertility"
+      }
+    },
+    "Bacterial Leaf Blight": {
+      "treatment": {
+        "chemical": "Streptocycline spray (limited use)",
+        "organic": "Pseudomonas bio-spray",
+        "prevention": "Use resistant varieties and clean irrigation water"
+      }
+    },
+    "Healthy": {
+      "treatment": {
+        "chemical": "No chemical treatment required",
+        "organic": "Green manure application",
+        "prevention": "Proper water management"
+      }
+    }
+  },
+
+  "Maize": {
+    "Leaf Blight": {
+      "treatment": {
+        "chemical": "Mancozeb fungicide",
+        "organic": "Neem oil spray",
+        "prevention": "Crop rotation and residue management"
+      }
+    },
+    "Downy Mildew": {
+      "treatment": {
+        "chemical": "Metalaxyl fungicide",
+        "organic": "Biological seed treatment",
+        "prevention": "Use disease-free seeds"
+      }
+    },
+    "Common Rust": {
+      "treatment": {
+        "chemical": "Propiconazole fungicide",
+        "organic": "Sulfur-based spray",
+        "prevention": "Use resistant hybrids"
+      }
+    },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Organic manure application",
+      "prevention": "Maintain field hygiene"
+    }
+  }
+},
+
+"Apple": {
+  "Apple Scab": {
+    "treatment": {
+      "chemical": "Mancozeb fungicide",
+      "organic": "Neem oil spray",
+      "prevention": "Remove infected leaves and improve air circulation"
+    }
+  },
+  "Black Rot": {
+    "treatment": {
+      "chemical": "Captan fungicide",
+      "organic": "Copper spray",
+      "prevention": "Prune diseased branches"
+    }
+  },
+  "Cedar Apple Rust": {
+    "treatment": {
+      "chemical": "Myclobutanil fungicide",
+      "organic": "Sulfur spray",
+      "prevention": "Remove nearby juniper plants"
+    }
+  },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Balanced fertilization",
+      "prevention": "Regular orchard monitoring"
+    }
+  }
+},
+
+"Cherry": {
+  "Powdery Mildew": {
+    "treatment": {
+      "chemical": "Triadimefon fungicide",
+      "organic": "Sulfur spray",
+      "prevention": "Maintain proper plant spacing"
+    }
+  },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Soil nutrient maintenance",
+      "prevention": "Avoid excess humidity"
+    }
+  }
+},
+"Grape": {
+  "Black Rot": {
+    "treatment": {
+      "chemical": "Mancozeb fungicide",
+      "organic": "Copper spray",
+      "prevention": "Remove infected berries"
+    }
+  },
+  "Esca": {
+    "treatment": {
+      "chemical": "No effective chemical control",
+      "organic": "Trunk surgery and sanitation",
+      "prevention": "Avoid vine injury"
+    }
+  },
+  "Leaf Blight": {
+    "treatment": {
+      "chemical": "Chlorothalonil fungicide",
+      "organic": "Neem oil spray",
+      "prevention": "Improve air circulation"
+    }
+  },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Balanced irrigation",
+      "prevention": "Seasonal pruning"
+    }
+  }
+},
+"Orange": {
+  "Citrus Greening": {
+    "treatment": {
+      "chemical": "Imidacloprid (vector control)",
+      "organic": "Neem oil",
+      "prevention": "Control psyllid population"
+    }
+  },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Organic compost",
+      "prevention": "Regular orchard monitoring"
+    }
+  }
+},
+"Soybean": {
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Rhizobium inoculation",
+      "prevention": "Proper crop rotation"
+    }
+  }
+},
+
+"Blueberry": {
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Mulching",
+      "prevention": "Maintain soil acidity"
+    }
+  }
+},
+
+"Raspberry": {
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Organic compost",
+      "prevention": "Good drainage"
+    }
+  }
+},
+
+"Squash": {
+  "Powdery Mildew": {
+    "treatment": {
+      "chemical": "Sulfur fungicide",
+      "organic": "Milk spray",
+      "prevention": "Adequate spacing"
+    }
+  }
+},
+
+"Strawberry": {
+  "Leaf Scorch": {
+    "treatment": {
+      "chemical": "Captan fungicide",
+      "organic": "Neem oil spray",
+      "prevention": "Avoid overhead watering"
+    }
+  },
+  "Healthy": {
+    "treatment": {
+      "chemical": "No chemical treatment required",
+      "organic": "Organic manure",
+      "prevention": "Field sanitation"
+    }
+  }
+}
+}
+

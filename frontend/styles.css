@@ -1,0 +1,37 @@
+/* Sky Blue Theme */
+body {
+    background-color: #E0F7FA;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.stApp {
+    background: linear-gradient(180deg, #E0F7FA, #76D6E1);
+}
+
+h1 {
+    color: #0C4A50;
+}
+
+.stButton > button {
+    background-color: #1B9AAA;
+    color: white;
+    border-radius: 8px;
+}
+.stButton > button:hover {
+    background-color: #147783;
+}
+img {
+    margin-top: 10px;
+}
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #666;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    z-index: 999;
+}

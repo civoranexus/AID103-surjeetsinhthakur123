@@ -1,0 +1,986 @@
+[
+  {
+    "id": "f64aad856ac54ec592f504028e8e8f55",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "1162cef5082c4452a9d639c2cf7db725",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "3893097caa4545c7b5785c698a7ab87b",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "a98d258beea646109336b7c1ca1dc817",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "731070879e6a450eb0d56d88221ec3e6",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "a0d0ee4413334c8487ffd2584474cdc7",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "af575078146947c29f84aeeae215c730",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Farmer confirmed prediction"
+  },
+  {
+    "id": "70672baffa3f4b30929dffc7ae3dcd08",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "id": "15374f2b9f514e578855a3057dec9b66",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": ""
+  },
+  {
+    "id": "1b29e209d53744fb9db96280c9f6080e",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Need proper solution"
+  },
+  {
+    "id": "d610e70daf8d41a4810aabeb835f649e",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": ""
+  },
+  {
+    "id": "5a0ce8adcc8947a7be0b78584411084e",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "99.97%",
+    "correct": true,
+    "comment": ""
+  },
+  {
+    "id": "0b102616a4d845b8881c919aefa86d7c",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "99.97%",
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "id": "a4ffa6fc13554c03950804a51a9f816f",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "99.97%",
+    "correct": null,
+    "comment": "Need more information about crop disease"
+  },
+  {
+    "id": "59eac5e5661442f9a6462137943b9e89",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": null,
+    "comment": "Need suggestion"
+  },
+  {
+    "id": "ed0dd8d5ce444680b26b5018bb9201d4",
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": "RULE_BASED",
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "outcome": "Recovered",
+    "yield_change": "Improved",
+    "days_after_treatment": 1,
+    "comment": ""
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "outcome": "Recovered",
+    "yield_change": "Improved",
+    "days_after_treatment": 1,
+    "comment": ""
+  },
+  {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Leaf Mold",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": false,
+    "comment": "Prediction is incorrect"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Cercospora Leaf Spot Gray Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Common Rust ",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Blueberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Powdery Mildew",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Squash",
+    "disease": "Powdery Mildew",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Orange",
+    "disease": "Haunglongbing (Citrus Greening)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Target Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Common Rust ",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Mosaic Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Target Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Mosaic Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Raspberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "outcome": "Recovered",
+    "yield_change": "Improved",
+    "days_after_treatment": 1,
+    "comment": ""
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": null,
+    "comment": "Good"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Corn (Maize)",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Soybean",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Strawberry",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Leaf Mold",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Peach",
+    "disease": "Unknown",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Bacterial Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Pepper, Bell",
+    "disease": "Healthy",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Powdery Mildew",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Cherry ",
+    "disease": "Powdery Mildew",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  },
+  {
+    "crop": "Rice",
+    "disease": "Brown Spot",
+    "confidence": 50.0,
+    "correct": true,
+    "comment": "Prediction is correct"
+  }
+]
